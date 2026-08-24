@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RetinaScan AI - Image Upload</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#727783",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#424752",
+                        "on-secondary-fixed": "#002022",
+                        "secondary-fixed": "#7df4ff",
+                        "primary": "#00478d",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "error-container": "#ffdad6",
+                        "surface-dim": "#d9dadb",
+                        "on-primary-container": "#c8daff",
+                        "secondary": "#006970",
+                        "surface-container-low": "#f3f4f5",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#141d23",
+                        "tertiary-fixed-dim": "#bfc8d0",
+                        "surface-bright": "#f8f9fa",
+                        "primary-fixed": "#d6e3ff",
+                        "error": "#ba1a1a",
+                        "surface-container": "#edeeef",
+                        "tertiary-fixed": "#dbe4ed",
+                        "on-secondary-container": "#006e75",
+                        "surface": "#f8f9fa",
+                        "on-background": "#191c1d",
+                        "on-tertiary-container": "#d1dae4",
+                        "primary-fixed-dim": "#a9c7ff",
+                        "surface-variant": "#e1e3e4",
+                        "surface-container-high": "#e7e8e9",
+                        "background": "#f8f9fa",
+                        "surface-tint": "#005db6",
+                        "secondary-container": "#7af1fc",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-secondary-fixed-variant": "#004f54",
+                        "on-tertiary-fixed-variant": "#3f484f",
+                        "on-primary-fixed-variant": "#00468c",
+                        "tertiary-container": "#576068",
+                        "primary-container": "#005eb8",
+                        "secondary-fixed-dim": "#5dd8e2",
+                        "outline-variant": "#c2c6d4",
+                        "tertiary": "#404850",
+                        "inverse-primary": "#a9c7ff",
+                        "on-surface": "#191c1d",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#2e3132",
+                        "on-primary-fixed": "#001b3d",
+                        "inverse-on-surface": "#f0f1f2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "40px",
+                        "container-max": "1440px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "data-mono": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "data-mono": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen flex flex-col antialiased">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16 bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-on-surface-variant">
+<div class="flex items-center gap-8">
+<h1 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed-dim tracking-tight">RetinaScan AI</h1>
+<nav class="hidden md:flex gap-6">
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors cursor-pointer active:opacity-80" href="#">Dashboard</a>
+<a class="font-body-md text-body-md text-primary dark:text-primary-fixed-dim font-bold border-b-2 border-primary cursor-pointer active:opacity-80 h-16 flex items-center" href="#">Upload</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors cursor-pointer active:opacity-80" href="#">Reports</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors cursor-pointer active:opacity-80" href="#">Support</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<img alt="Clinician profile avatar" class="w-8 h-8 rounded-full border border-outline-variant object-cover" data-alt="A professional headshot of a clinical technician in a bright, modern medical setting. Soft, clinical lighting, high resolution, portraying competence and calm authority. Minimalist background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2HcO2aQ_Bl-vEhfJYFtz2gVJ5l6Ig5qpCpm6cu_Nep6NTZlA0Ymfz_A47nywAmAD9BzT9IAA3cVLCWgdlE1Bq8WBb0aTvYPGkf6mNpImOB3wTFFoe43KoVCZisLDfPzNtvFNRIhrbHv4ProCI3WrKuB9rcPcQTTyTsHWL1R01Vkcyyt4vAzkmYXmXekQuFI7L_5t02_ykopGcyrOTIwrvqwrt4Gnw7ikSOpPonRC1sGivcE9MMvc"/>
+</div>
+</header>
+<div class="flex flex-1 pt-16 h-[calc(100vh-16px)]">
+<!-- SideNavBar -->
+<aside class="hidden lg:flex flex-col h-full pt-20 w-64 border-r border-outline-variant dark:border-on-surface-variant bg-surface-container-low dark:bg-surface-container-highest shrink-0 fixed left-0 top-16 bottom-0 z-40 overflow-y-auto">
+<div class="px-6 mb-8">
+<div class="flex items-center gap-4 mb-2">
+<div class="w-10 h-10 rounded bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined" data-icon="local_hospital" data-weight="fill" style="font-variation-settings: 'FILL' 1;">local_hospital</span>
+</div>
+<div>
+<h2 class="font-label-md text-label-md font-bold text-primary">Clinical Portal</h2>
+<p class="font-label-md text-label-md text-on-surface-variant text-[12px]">v2.4.0 Secure</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-4 flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-all scale-95 duration-100 hover:scale-100" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+                    Patient List
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md bg-primary-container text-on-primary-container transition-all scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="add_a_photo" data-weight="fill" style="font-variation-settings: 'FILL' 1;">add_a_photo</span>
+                    New Screening
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-all scale-95 duration-100 hover:scale-100" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+                    Analysis History
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-all scale-95 duration-100 hover:scale-100" href="#">
+<span class="material-symbols-outlined" data-icon="enhanced_encryption">enhanced_encryption</span>
+                    Secure Vault
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-all scale-95 duration-100 hover:scale-100" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                    Settings
+                </a>
+</nav>
+<div class="p-4 mt-auto border-t border-outline-variant">
+<button class="w-full py-2 px-4 border border-error text-error rounded-lg font-label-md text-label-md hover:bg-error-container hover:text-on-error-container transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" data-icon="emergency">emergency</span>
+                    Emergency Support
+                </button>
+<div class="flex justify-center gap-4 mt-4">
+<a class="text-on-surface-variant hover:text-primary flex items-center gap-1 font-label-md text-[12px]" href="#">
+<span class="material-symbols-outlined text-[16px]" data-icon="policy">policy</span> Privacy
+                    </a>
+<a class="text-on-surface-variant hover:text-primary flex items-center gap-1 font-label-md text-[12px]" href="#">
+<span class="material-symbols-outlined text-[16px]" data-icon="gavel">gavel</span> Terms
+                    </a>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 lg:ml-64 p-margin-mobile md:p-margin-desktop overflow-y-auto bg-surface relative">
+<div class="max-w-container-max mx-auto h-full flex flex-col gap-gutter">
+<header class="mb-4">
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-background mb-2">Fundus Image Upload</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">Upload patient retinal scans for automated AI analysis. Images will be processed using our proprietary MATLAB enhancement algorithm prior to diagnostic evaluation.</p>
+</header>
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-gutter flex-1">
+<!-- Left Column: Upload & Enhancement Controls -->
+<div class="xl:col-span-5 flex flex-col gap-6">
+<!-- Drag & Drop Zone -->
+<div class="bg-surface-container-lowest border-2 border-dashed border-primary-fixed-dim rounded-xl p-8 flex flex-col items-center justify-center text-center h-64 hover:bg-surface-container-low transition-colors cursor-pointer relative group">
+<div class="w-16 h-16 rounded-full bg-primary-fixed flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="cloud_upload">cloud_upload</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Drag &amp; Drop Scans Here</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">or click to browse local files</p>
+<p class="font-label-md text-label-md text-outline text-[12px]">Supported formats: DICOM, TIFF, high-res JPEG/PNG. Max size: 50MB.</p>
+<input accept=".dcm,.tiff,.jpg,.jpeg,.png" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" multiple="" type="file"/>
+</div>
+<!-- MATLAB Enhancement Section -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
+<div class="flex justify-between items-center mb-4 border-b border-outline-variant pb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="auto_awesome">auto_awesome</span>
+<h3 class="font-headline-md text-[18px] font-semibold text-on-surface">MATLAB Enhancement</h3>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-[14px] mb-6">
+                                Applies contrast limited adaptive histogram equalization (CLAHE) and noise reduction to improve microaneurysm visibility for the AI model.
+                            </p>
+<div class="space-y-4">
+<div>
+<div class="flex justify-between font-label-md text-[12px] text-on-surface-variant mb-1">
+<span>Enhancement Progress</span>
+<span>78%</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 78%"></div>
+</div>
+</div>
+<div class="flex items-center gap-2 text-primary font-label-md text-[12px] bg-primary-fixed-dim/20 p-2 rounded">
+<span class="material-symbols-outlined text-[16px]" data-icon="info">info</span>
+                                    Processing scan_OD_20231025.tiff...
+                                </div>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary py-3 rounded-lg font-label-md text-label-md font-bold hover:bg-primary-container hover:text-on-primary-container transition-colors flex items-center justify-center gap-2 shadow-sm">
+<span class="material-symbols-outlined" data-icon="model_training">model_training</span>
+                            Run Diagnostic AI
+                        </button>
+</div>
+<!-- Right Column: Image Preview & Comparison -->
+<div class="xl:col-span-7 bg-surface-container-low border border-outline-variant rounded-xl p-6 flex flex-col min-h-[500px]">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-headline-md text-[18px] font-semibold text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="preview">preview</span>
+                                Scan Preview
+                            </h3>
+<div class="flex gap-2">
+<button class="px-3 py-1 rounded bg-surface border border-outline-variant font-label-md text-[12px] text-on-surface hover:bg-surface-variant transition-colors">Original</button>
+<button class="px-3 py-1 rounded bg-primary text-on-primary font-label-md text-[12px] shadow-sm">Enhanced</button>
+</div>
+</div>
+<div class="flex-1 grid grid-cols-2 gap-4">
+<div class="flex flex-col relative group">
+<span class="absolute top-2 left-2 bg-surface/80 backdrop-blur px-2 py-1 rounded text-[10px] font-data-mono font-bold text-on-surface z-10 border border-outline-variant/50">RAW INPUT</span>
+<div class="flex-1 bg-black rounded-lg overflow-hidden border border-outline-variant relative">
+<img alt="Original Fundus Scan" class="w-full h-full object-cover opacity-80 mix-blend-screen" data-alt="A raw, unedited fundus photograph of a human retina. The image is slightly dark and low contrast, typical of an initial medical scan before processing. Clinical, objective, detailed view of blood vessels and the optic disc." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9ZgWSdc8dY79PdIK2xWQpShmTr2L4ddrHdrbKMf1qpNGo_Xv-nGkewJeLJDlZJohXnDA6_iisJhPPtVwEWUkTvBqhex8qqSrpdxwfdXv5SOSQqgnLJ0x6J0xcUAHxsq7X9odq81jE7yDUEZxhppVMJLWSsvMnqyg4WbrfbeqHzZbKp20j0L5AIxh2VM0M73FPGkV7FNT6pifOI872MmCOEL5E2nnHcfdsrI_VWrgPYx1l1iClKvw"/>
+</div>
+</div>
+<div class="flex flex-col relative group">
+<span class="absolute top-2 left-2 bg-primary/80 backdrop-blur px-2 py-1 rounded text-[10px] font-data-mono font-bold text-on-primary z-10 border border-primary-fixed-dim/50">MATLAB ENHANCED</span>
+<div class="flex-1 bg-black rounded-lg overflow-hidden border-2 border-primary relative shadow-[0_0_15px_rgba(0,93,182,0.2)]">
+<img alt="Enhanced Fundus Scan" class="w-full h-full object-cover mix-blend-screen" data-alt="A highly enhanced fundus photograph of a human retina. The image has high contrast, sharp details, and normalized lighting, highlighting microaneurysms and fine blood vessel structures clearly. Clinical, advanced medical imaging aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlcicxlIjFOw5JNpXoUwe8ad6jo7Zf4-9Oe_Nw33xPT4zrqONZeQIxyprGzeaY291uLTPd-LvcEFMr3I3vJ1I32m59c9YYECiP5AJx6VMRkWZygw_NIRNAua-BprPhwTR__eoqvYJLtNuW7TuhjXYo0WCZ-kKNdsZ6UjYD-i3ZI4mKO9NZqlzW06UaOSpjcjvh73uvudRNwy8HZDhanzjPpKPTro2HiixEay-SvLvG61lV0C6rBLc"/>
+<!-- Simulated AI Highlight overlay -->
+<div class="absolute top-[40%] left-[60%] w-8 h-8 border border-error rounded-full animate-pulse z-20"></div>
+</div>
+</div>
+</div>
+<div class="mt-4 flex justify-between items-center border-t border-outline-variant pt-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="verified_user">verified_user</span>
+<span class="font-label-md text-[12px] text-on-surface-variant">HIPAA Compliant Transfer</span>
+</div>
+<div class="font-data-mono text-[12px] text-on-surface-variant bg-surface px-2 py-1 rounded border border-outline-variant">
+                                Patient ID: <span class="text-on-surface font-bold">REDACTED</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Footer -->
+<footer class="w-full py-6 px-margin-desktop flex flex-col md:flex-row justify-between items-center bg-surface-container dark:bg-surface-dim border-t border-outline-variant relative z-50">
+<p class="font-label-md text-label-md font-bold text-secondary dark:text-secondary-fixed-dim mb-4 md:mb-0">
+            © 2024 RetinaScan AI. HIPAA Compliant.
+        </p>
+<nav class="flex flex-wrap justify-center gap-6">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-opacity duration-200" href="#">Privacy Policy</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-opacity duration-200" href="#">Terms of Service</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-opacity duration-200" href="#">Medical Disclaimer</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-opacity duration-200" href="#">Contact Support</a>
+</nav>
+</footer>
+</body></html>

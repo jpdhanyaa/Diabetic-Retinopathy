@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Analysis Report - RetinaScan AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "outline": "#727783",
+                      "on-secondary": "#ffffff",
+                      "on-surface-variant": "#424752",
+                      "on-secondary-fixed": "#002022",
+                      "secondary-fixed": "#7df4ff",
+                      "primary": "#00478d",
+                      "on-tertiary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "error-container": "#ffdad6",
+                      "surface-dim": "#d9dadb",
+                      "on-primary-container": "#c8daff",
+                      "secondary": "#006970",
+                      "surface-container-low": "#f3f4f5",
+                      "on-primary": "#ffffff",
+                      "on-tertiary-fixed": "#141d23",
+                      "tertiary-fixed-dim": "#bfc8d0",
+                      "surface-bright": "#f8f9fa",
+                      "primary-fixed": "#d6e3ff",
+                      "error": "#ba1a1a",
+                      "surface-container": "#edeeef",
+                      "tertiary-fixed": "#dbe4ed",
+                      "on-secondary-container": "#006e75",
+                      "surface": "#f8f9fa",
+                      "on-background": "#191c1d",
+                      "on-tertiary-container": "#d1dae4",
+                      "primary-fixed-dim": "#a9c7ff",
+                      "surface-variant": "#e1e3e4",
+                      "surface-container-high": "#e7e8e9",
+                      "background": "#f8f9fa",
+                      "surface-tint": "#005db6",
+                      "secondary-container": "#7af1fc",
+                      "surface-container-highest": "#e1e3e4",
+                      "on-secondary-fixed-variant": "#004f54",
+                      "on-tertiary-fixed-variant": "#3f484f",
+                      "on-primary-fixed-variant": "#00468c",
+                      "tertiary-container": "#576068",
+                      "primary-container": "#005eb8",
+                      "secondary-fixed-dim": "#5dd8e2",
+                      "outline-variant": "#c2c6d4",
+                      "tertiary": "#404850",
+                      "inverse-primary": "#a9c7ff",
+                      "on-surface": "#191c1d",
+                      "surface-container-lowest": "#ffffff",
+                      "on-error": "#ffffff",
+                      "inverse-surface": "#2e3132",
+                      "on-primary-fixed": "#001b3d",
+                      "inverse-on-surface": "#f0f1f2"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "unit": "4px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "40px",
+                      "container-max": "1440px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "data-mono": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "headline-lg-mobile": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "data-mono": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background antialiased min-h-screen flex flex-col pt-16">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-on-surface-variant docked full-width top-0 flat no shadows fixed left-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16">
+<div class="flex items-center gap-8">
+<h1 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed-dim tracking-tight">RetinaScan AI</h1>
+<nav class="hidden md:flex gap-6">
+<a class="text-on-surface-variant dark:text-surface-variant font-label-md text-label-md hover:text-primary dark:hover:text-primary-fixed-dim transition-colors cursor-pointer active:opacity-80 pb-1" href="#">Dashboard</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-label-md text-label-md hover:text-primary dark:hover:text-primary-fixed-dim transition-colors cursor-pointer active:opacity-80 pb-1" href="#">Upload</a>
+<a class="text-primary dark:text-primary-fixed-dim font-bold border-b-2 border-primary font-label-md text-label-md hover:text-primary dark:hover:text-primary-fixed-dim transition-colors cursor-pointer active:opacity-80 pb-1" href="#">Reports</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-label-md text-label-md hover:text-primary dark:hover:text-primary-fixed-dim transition-colors cursor-pointer active:opacity-80 pb-1" href="#">Support</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-primary dark:text-primary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim transition-colors cursor-pointer active:opacity-80 flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<button class="text-primary dark:text-primary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim transition-colors cursor-pointer active:opacity-80 flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container overflow-hidden border border-outline-variant">
+<img alt="Clinician profile avatar" class="w-full h-full object-cover" data-alt="A professional medical clinician avatar portrait, bright clean clinical lighting, subtle blue tones in the background, sharp focus, modern minimalist corporate medical style, exuding trust and competence." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjKhph4saLtjZfseSpqRZb9TcQ3vgPX7NNyG9GRbIXXLuSQPV3Lgrw4rbG62U56oqKt7NXn4wFXPgd60WrZZOtSwx-H-YTYQ1HjxpbU6tKbO4l_ZW-fLooz8oecoYLaThFQvPF_mL6n2bVzCIfTaJFY5bwhVyZd7MZkqiKx2ZV5WwMVi7MI2O6WRWU_Sk27ty1Jz9hmBp5sxspVA5RzUJqiSFL0HX118lbITo20Ul4Opqv-b_PiM8"/>
+</div>
+</div>
+</header>
+<div class="flex flex-1 max-w-container-max mx-auto w-full">
+<!-- SideNavBar -->
+<aside class="bg-surface-container-low dark:bg-surface-container-highest border-r border-outline-variant dark:border-on-surface-variant docked left-0 h-full w-64 flat no shadows hidden lg:flex flex-col h-[calc(100vh-64px)] fixed z-40 overflow-y-auto pt-6 px-4">
+<div class="mb-8 px-2 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container border border-outline-variant flex items-center justify-center shrink-0">
+<img alt="Medical Facility Logo" class="w-8 h-8 object-contain" data-alt="Minimalist abstract logo for a medical facility, geometric shapes suggesting an eye or a cross, clean lines, corporate blue and teal color palette, set against a pristine white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3ZFUBb4Z93TErOIIoSY7ldaWhyxEWdEIXdAkiRXbjS0Xj5IrcLD0ilJvxFotVLQqn4Qmc5zAuLqp_nGDd2koRaHMRAAvjHw2VgR_dhOZxm02IgocVHwOYl_6T5JGxcLe1M5cujgB8qU6tvJTDwIZ4p4ysarkC4hXB_f9bJvZT6gJmbHHd_oAzN3lEZc2smRad2cwfhuFs2qem7uAxY3HFdG5YRK-Jnal6VzVJa3vNrZlSeenFyoI"/>
+</div>
+<div>
+<h2 class="font-headline-md text-[16px] leading-[1.2] font-semibold text-primary">Clinical Portal</h2>
+<p class="font-label-md text-[12px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="enhanced_encryption">enhanced_encryption</span>
+                        v2.4.0 Secure
+                    </p>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:bg-surface-container-highest transition-all scale-95 duration-100 font-label-md text-label-md group" href="#">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="group">group</span>
+                    Patient List
+                </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:bg-surface-container-highest transition-all scale-95 duration-100 font-label-md text-label-md group" href="#">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="add_a_photo">add_a_photo</span>
+                    New Screening
+                </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary-container text-on-primary-container hover:bg-surface-container-highest transition-all scale-95 duration-100 font-label-md text-label-md group" href="#">
+<span class="material-symbols-outlined text-on-primary-container" data-icon="analytics">analytics</span>
+                    Analysis History
+                </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:bg-surface-container-highest transition-all scale-95 duration-100 font-label-md text-label-md group" href="#">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="enhanced_encryption">enhanced_encryption</span>
+                    Secure Vault
+                </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:bg-surface-container-highest transition-all scale-95 duration-100 font-label-md text-label-md group" href="#">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="settings">settings</span>
+                    Settings
+                </a>
+</nav>
+<div class="mt-auto pt-6 border-t border-outline-variant flex flex-col gap-2 pb-6">
+<button class="w-full py-2 px-4 rounded border border-primary text-primary font-label-md text-label-md hover:bg-surface-container-low transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">support_agent</span>
+                    Emergency Support
+                </button>
+<div class="flex justify-between px-2 mt-4">
+<a class="flex items-center gap-1 text-[12px] text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[14px]" data-icon="policy">policy</span>
+                        Privacy
+                    </a>
+<a class="flex items-center gap-1 text-[12px] text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[14px]" data-icon="gavel">gavel</span>
+                        Terms
+                    </a>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 lg:ml-64 p-margin-mobile md:p-margin-desktop bg-surface-bright min-h-[calc(100vh-64px)]">
+<!-- Report Header -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 border-b border-outline-variant pb-6">
+<div>
+<div class="flex items-center gap-3 mb-2">
+<h2 class="font-headline-lg text-headline-lg md:font-headline-lg text-headline-lg text-on-surface">Analysis Report #DR-8924</h2>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#E6F4EA] text-[#137333] border border-[#CEEAD6] font-label-md text-[12px]">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                            Verified
+                        </span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Patient: John Doe (ID: 994-221) • Scan Date: Oct 24, 2024</p>
+</div>
+<div class="flex gap-3 w-full md:w-auto">
+<button class="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded border border-primary text-primary font-label-md text-label-md hover:bg-surface-container-low transition-colors shadow-[0_4px_12px_rgba(0,0,0,0.05)] bg-surface-container-lowest">
+<span class="material-symbols-outlined text-[18px]">share</span>
+                        Share
+                    </button>
+<button class="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container transition-colors shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
+<span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+                        Download PDF Report
+                    </button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-8">
+<!-- Primary Diagnostic Result (Spans 8 cols on desktop) -->
+<div class="md:col-span-8 bg-surface-container-lowest rounded-xl border border-[#E9ECEF] p-6 shadow-[0_4px_12px_rgba(0,0,0,0.02)] flex flex-col justify-center">
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-2">Primary AI Diagnosis</h3>
+<div class="flex items-center gap-4 mb-4">
+<div class="w-12 h-12 rounded-full bg-[#FFF3CD] flex items-center justify-center border border-[#FFEEBA]">
+<span class="material-symbols-outlined text-[#856404] text-[28px]">warning</span>
+</div>
+<h4 class="font-headline-lg text-[28px] leading-tight text-on-surface font-bold">Signs of Mild NPDR Detected</h4>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 max-w-2xl">
+                        AI analysis indicates the presence of microaneurysms and early signs of exudates primarily in the temporal macula region. Confidence score is high. Routine follow-up recommended within 6 months.
+                    </p>
+<div class="grid grid-cols-3 gap-4 border-t border-outline-variant pt-6">
+<div>
+<span class="block font-label-md text-[12px] text-on-surface-variant mb-1">AI Confidence</span>
+<span class="font-data-mono text-data-mono text-primary text-[18px]">94.2%</span>
+</div>
+<div>
+<span class="block font-label-md text-[12px] text-on-surface-variant mb-1">Processing Time</span>
+<span class="font-data-mono text-data-mono text-on-surface text-[18px]">1.4s</span>
+</div>
+<div>
+<span class="block font-label-md text-[12px] text-on-surface-variant mb-1">Algorithm Version</span>
+<span class="font-data-mono text-data-mono text-on-surface text-[18px]">v4.1.0-DR</span>
+</div>
+</div>
+</div>
+<!-- Patient Snapshot (Spans 4 cols on desktop) -->
+<div class="md:col-span-4 bg-surface-container-lowest rounded-xl border border-[#E9ECEF] p-6 shadow-[0_4px_12px_rgba(0,0,0,0.02)]">
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-4 border-b border-outline-variant pb-2">Patient Profile</h3>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="font-body-md text-[14px] text-on-surface-variant">Name</span>
+<span class="font-label-md text-[14px] text-on-surface">John Doe</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-[14px] text-on-surface-variant">DOB</span>
+<span class="font-label-md text-[14px] text-on-surface">1965-04-12 (59y)</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-[14px] text-on-surface-variant">Gender</span>
+<span class="font-label-md text-[14px] text-on-surface">Male</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-[14px] text-on-surface-variant">Diabetic Duration</span>
+<span class="font-label-md text-[14px] text-on-surface">12 Years (Type 2)</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-[14px] text-on-surface-variant">Last HbA1c</span>
+<span class="font-label-md text-[14px] text-error font-bold">8.1% (High)</span>
+</div>
+</div>
+</div>
+<!-- Fundus Image Analysis (Spans 6 cols on desktop) -->
+<div class="md:col-span-6 bg-surface-container-lowest rounded-xl border border-[#E9ECEF] overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.02)] flex flex-col">
+<div class="p-4 border-b border-outline-variant flex justify-between items-center bg-surface-bright">
+<h3 class="font-label-md text-label-md text-on-surface font-semibold">OD (Right Eye) Analysis</h3>
+<div class="flex items-center gap-2">
+<button class="px-2 py-1 text-[12px] bg-primary text-on-primary rounded font-label-md">Heatmap</button>
+<button class="px-2 py-1 text-[12px] text-on-surface-variant border border-outline-variant rounded font-label-md hover:bg-surface-container-low">Original</button>
+</div>
+</div>
+<div class="relative w-full aspect-square bg-black flex-1">
+<!-- Simulated Fundus Image with Heatmap Overlay -->
+<div class="absolute inset-0 bg-cover bg-center opacity-80" data-alt="A highly detailed medical retinal fundus photograph of a human eye, showcasing intricate blood vessels and the optic disc. Overlaying the image is a subtle digital diagnostic heatmap with vibrant yellow and orange clusters indicating areas of clinical interest, set against a dark background, embodying advanced AI medical imaging technology." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB1Rp59i3NUAx8C_Hct6qL6tpdj0PwoNgnrmWBuvm3zCLi1-mnaVGlxDS-OTG7jkTKtQwPqOoFPVyqBO0JzhQkamhl249OnZgEz5w_d5vPH9rMc8s8EXIohwzKuK2AkRcvYWIMeb2FNV_8EwgruoYkYEMgo6l5IsFiTxP1H56ws3mu32CJZeio6L51t6QvJvR_JF_QhmJ6V4Q9DDk3W1W9mJtAaU0mrXSDonIyyxlsgzBvlUWsd1VQ')"></div>
+<!-- HUD Elements -->
+<div class="absolute top-4 left-4 flex flex-col gap-2">
+<span class="px-2 py-1 bg-black/60 backdrop-blur-sm text-white font-data-mono text-[10px] rounded border border-white/20">Microaneurysms: 4 detected</span>
+<span class="px-2 py-1 bg-black/60 backdrop-blur-sm text-white font-data-mono text-[10px] rounded border border-white/20">Exudates: Trace</span>
+</div>
+</div>
+</div>
+<!-- Structural Analysis Breakdown (Spans 6 cols on desktop) -->
+<div class="md:col-span-6 bg-surface-container-lowest rounded-xl border border-[#E9ECEF] p-6 shadow-[0_4px_12px_rgba(0,0,0,0.02)] flex flex-col">
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-6 border-b border-outline-variant pb-2">Pathology Breakdown</h3>
+<div class="space-y-6 flex-1">
+<!-- Metric 1 -->
+<div>
+<div class="flex justify-between items-end mb-2">
+<span class="font-body-md text-[14px] text-on-surface font-medium">Hemorrhages / Microaneurysms</span>
+<span class="font-data-mono text-[14px] text-on-surface">Mild</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-[#F5B041] w-[35%] rounded-full"></div>
+</div>
+</div>
+<!-- Metric 2 -->
+<div>
+<div class="flex justify-between items-end mb-2">
+<span class="font-body-md text-[14px] text-on-surface font-medium">Hard Exudates</span>
+<span class="font-data-mono text-[14px] text-on-surface">Trace</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-[#F5B041] w-[15%] rounded-full"></div>
+</div>
+</div>
+<!-- Metric 3 -->
+<div>
+<div class="flex justify-between items-end mb-2">
+<span class="font-body-md text-[14px] text-on-surface font-medium">Cotton Wool Spots</span>
+<span class="font-data-mono text-[14px] text-[#137333]">None</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-[#137333] w-[5%] rounded-full"></div>
+</div>
+</div>
+<!-- Metric 4 -->
+<div>
+<div class="flex justify-between items-end mb-2">
+<span class="font-body-md text-[14px] text-on-surface font-medium">Macular Edema Risk</span>
+<span class="font-data-mono text-[14px] text-on-surface">Low</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[20%] rounded-full"></div>
+</div>
+</div>
+</div>
+<div class="mt-6 p-4 bg-surface-container-low rounded-lg border border-outline-variant">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary mt-0.5" data-icon="info">info</span>
+<p class="font-body-md text-[13px] text-on-surface-variant leading-relaxed">
+                                 Analysis indicates changes consistent with Mild Non-Proliferative Diabetic Retinopathy. No immediate signs of clinically significant macular edema (CSME) detected in the current scan volume.
+                             </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Clinician Sign-off Area -->
+<div class="bg-surface-container-lowest rounded-xl border border-[#E9ECEF] p-6 shadow-[0_4px_12px_rgba(0,0,0,0.02)] mt-8">
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-6 border-b border-outline-variant pb-2">Clinical Review &amp; Authorization</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div>
+<label class="block font-label-md text-[13px] text-on-surface-variant mb-2">Reviewer Notes (Internal)</label>
+<textarea class="w-full h-32 p-3 bg-surface-bright border border-outline-variant rounded focus:outline-none focus:border-primary focus:shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] focus:border-b-2 font-body-md text-[14px] resize-none" placeholder="Add clinical observations confirming or adjusting the AI findings..."></textarea>
+</div>
+<div class="flex flex-col justify-end pb-2">
+<div class="border-b border-outline-variant border-dashed pb-2 mb-2 w-full max-w-sm">
+<span class="block h-12 w-full opacity-50 font-data-mono text-[18px] text-primary" style="font-family: 'Brush Script MT', cursive; line-height: 48px;">Dr. Sarah Jenkins, MD</span>
+</div>
+<div class="flex justify-between items-center max-w-sm">
+<span class="font-label-md text-[12px] text-on-surface-variant uppercase tracking-wide">Attending Ophthalmologist</span>
+<span class="font-data-mono text-[12px] text-on-surface-variant">Date: Oct 24, 2024</span>
+</div>
+<div class="mt-6 flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="shield">shield</span>
+<span class="font-label-md text-[11px] uppercase tracking-wider">HIPAA Compliant Record Saved securely</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Footer -->
+<footer class="bg-surface-container dark:bg-surface-dim border-t border-outline-variant full-width bottom-0 flat no shadows w-full py-6 px-margin-desktop flex flex-col md:flex-row justify-between items-center z-50 relative ml-0 lg:ml-64 w-auto">
+<div class="font-label-md text-label-md font-bold text-secondary dark:text-secondary-fixed-dim mb-4 md:mb-0">
+            © 2024 RetinaScan AI. HIPAA Compliant.
+        </div>
+<div class="flex flex-wrap gap-4 md:gap-6 justify-center">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-opacity duration-200" href="#">Privacy Policy</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-opacity duration-200" href="#">Terms of Service</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-opacity duration-200" href="#">Medical Disclaimer</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-opacity duration-200" href="#">Contact Support</a>
+</div>
+</footer>
+</body></html>
