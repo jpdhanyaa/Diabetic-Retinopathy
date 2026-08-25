@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RetinaScan AI - Account Registration</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#727783",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#424752",
+                        "on-secondary-fixed": "#002022",
+                        "secondary-fixed": "#7df4ff",
+                        "primary": "#00478d",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "error-container": "#ffdad6",
+                        "surface-dim": "#d9dadb",
+                        "on-primary-container": "#c8daff",
+                        "secondary": "#006970",
+                        "surface-container-low": "#f3f4f5",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#141d23",
+                        "tertiary-fixed-dim": "#bfc8d0",
+                        "surface-bright": "#f8f9fa",
+                        "primary-fixed": "#d6e3ff",
+                        "error": "#ba1a1a",
+                        "surface-container": "#edeeef",
+                        "tertiary-fixed": "#dbe4ed",
+                        "on-secondary-container": "#006e75",
+                        "surface": "#f8f9fa",
+                        "on-background": "#191c1d",
+                        "on-tertiary-container": "#d1dae4",
+                        "primary-fixed-dim": "#a9c7ff",
+                        "surface-variant": "#e1e3e4",
+                        "surface-container-high": "#e7e8e9",
+                        "background": "#f8f9fa",
+                        "surface-tint": "#005db6",
+                        "secondary-container": "#7af1fc",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-secondary-fixed-variant": "#004f54",
+                        "on-tertiary-fixed-variant": "#3f484f",
+                        "on-primary-fixed-variant": "#00468c",
+                        "tertiary-container": "#576068",
+                        "primary-container": "#005eb8",
+                        "secondary-fixed-dim": "#5dd8e2",
+                        "outline-variant": "#c2c6d4",
+                        "tertiary": "#404850",
+                        "inverse-primary": "#a9c7ff",
+                        "on-surface": "#191c1d",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#2e3132",
+                        "on-primary-fixed": "#001b3d",
+                        "inverse-on-surface": "#f0f1f2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "40px",
+                        "container-max": "1440px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "data-mono": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "data-mono": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="h-full bg-background text-on-background font-body-md antialiased overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container">
+<div class="min-h-screen flex flex-col md:flex-row">
+<!-- Registration Form Area (Left on Desktop) -->
+<main class="flex-1 flex flex-col justify-center px-margin-mobile md:px-[80px] lg:px-[120px] py-12 md:py-0 bg-surface">
+<div class="w-full max-w-md mx-auto">
+<!-- Brand Logo (Minimalist) -->
+<div class="mb-12 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[32px]" style="font-variation-settings: 'FILL' 1;">visibility</span>
+<h1 class="font-headline-md text-headline-md text-primary">RetinaScan AI</h1>
+</div>
+<div class="mb-10">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Create Clinician Account</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Register for secure access to the diagnostic platform.</p>
+</div>
+<form class="space-y-6">
+<!-- Full Name -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1" for="fullName">Full Name</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:ring-0 focus:border-primary focus:border-b-2 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition-colors" id="fullName" name="fullName" placeholder="Dr. Jane Doe" required="" type="text"/>
+</div>
+<!-- Medical ID (Optional) -->
+<div>
+<div class="flex justify-between items-center mb-1">
+<label class="block font-label-md text-label-md text-on-surface" for="medicalId">Medical License / NPI ID</label>
+<span class="font-label-md text-label-md text-outline">Optional</span>
+</div>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:ring-0 focus:border-primary focus:border-b-2 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition-colors" id="medicalId" name="medicalId" placeholder="e.g. 1234567890" type="text"/>
+</div>
+<!-- Email -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1" for="email">Institutional Email</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:ring-0 focus:border-primary focus:border-b-2 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition-colors" id="email" name="email" placeholder="jane.doe@hospital.edu" required="" type="email"/>
+</div>
+<!-- Password -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1" for="password">Secure Password</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:ring-0 focus:border-primary focus:border-b-2 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition-colors" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+<p class="mt-2 font-label-md text-label-md text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">info</span> Must be at least 12 characters.
+                        </p>
+</div>
+<!-- Terms Checkbox -->
+<div class="flex items-start gap-3 mt-8">
+<div class="flex items-center h-5">
+<input class="h-4 w-4 rounded border-outline-variant text-primary focus:ring-primary focus:ring-offset-background bg-surface-container-lowest" id="terms" name="terms" required="" type="checkbox"/>
+</div>
+<label class="font-label-md text-label-md text-on-surface-variant" for="terms">
+                            I agree to the <a class="text-primary hover:underline" href="#">Terms of Service</a> and acknowledge the <a class="text-primary hover:underline" href="#">Privacy Policy</a> governing HIPAA-compliant data handling.
+                        </label>
+</div>
+<!-- Submit Button -->
+<div class="pt-4">
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-3 px-6 rounded hover:bg-on-primary-fixed-variant transition-colors flex items-center justify-center gap-2" type="submit">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">shield</span>
+                            Create Secure Account
+                        </button>
+</div>
+</form>
+<div class="mt-8 text-center">
+<p class="font-body-md text-body-md text-on-surface-variant">
+                        Already have an account? <a class="text-primary font-label-md hover:underline" href="#">Log in</a>
+</p>
+</div>
+</div>
+</main>
+<!-- Trust & Imagery Panel (Right on Desktop, Hidden on Mobile) -->
+<aside class="hidden md:flex flex-1 relative bg-surface-container overflow-hidden">
+<!-- Background Image -->
+<div class="absolute inset-0 bg-cover bg-center bg-no-repeat" data-alt="A highly detailed, professional medical imaging environment. A sleek, modern retinal scanner is in soft focus in the background, emitting a calm, clinical blue light. The overall aesthetic is clean, minimalist, and corporate modern, emphasizing precision and security. The lighting is high-key and bright, evoking trust and advanced technology in a clinical setting." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB-4LWluynCvmT6p33EL5AfAKjwmQWwHWw06UrMPCwIW75c_kukQi_M0CfDDHo_SBvro5E7wIzz9V1zdYCB3aK2Rb54OffOo0Oi5EWi2s1SG--MS5EKEPGLqb9HQeD54WEMxOOrdvcNqDx8oM-NcgkgLFQfIwre48IxketIW2A1QtJ9Xyx9epa8DgpeeoRJzOSsdaCe0-THjjvK5-hdZI8jPFvceQj_6xCQAxrIfYTumniyiiPcdSs')">
+<!-- Overlay Gradient for text readability -->
+<div class="absolute inset-0 bg-gradient-to-t from-on-background/90 via-on-background/40 to-transparent"></div>
+</div>
+<!-- Trust Indicators Content -->
+<div class="relative z-10 w-full h-full flex flex-col justify-end p-margin-desktop text-on-primary">
+<div class="max-w-md bg-inverse-surface/80 backdrop-blur-md border border-outline-variant/30 rounded-xl p-8 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+<h3 class="font-headline-md text-headline-md mb-6 text-on-primary">Enterprise Grade Security</h3>
+<ul class="space-y-6">
+<li class="flex items-start gap-4">
+<div class="bg-primary-container text-on-primary-container p-2 rounded-lg shrink-0">
+<span class="material-symbols-outlined text-[24px]">enhanced_encryption</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md font-bold text-on-primary">End-to-End Encryption</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">All diagnostic imagery and patient metadata are encrypted at rest and in transit.</p>
+</div>
+</li>
+<li class="flex items-start gap-4">
+<div class="bg-primary-container text-on-primary-container p-2 rounded-lg shrink-0">
+<span class="material-symbols-outlined text-[24px]">verified_user</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md font-bold text-on-primary">HIPAA &amp; GDPR Compliant</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Strict adherence to global healthcare data privacy regulations.</p>
+</div>
+</li>
+<li class="flex items-start gap-4">
+<div class="bg-primary-container text-on-primary-container p-2 rounded-lg shrink-0">
+<span class="material-symbols-outlined text-[24px]">history</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md font-bold text-on-primary">Comprehensive Audit Trails</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Immutable logging of all access and analysis actions for institutional review.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</aside>
+</div>
+</body></html>
