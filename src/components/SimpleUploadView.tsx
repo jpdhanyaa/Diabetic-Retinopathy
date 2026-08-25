@@ -1,5 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { PatientDetails } from '../types';
+import { validateRetinalImageQuality, QualityAnalysisResult } from '../utils/qualityChecker';
 
 interface SimpleUploadViewProps {
   initialImage: string | null;
@@ -19,7 +20,29 @@ export const SimpleUploadView: React.FC<SimpleUploadViewProps> = ({
   onBackToHome
 }) => {
   const [imagePreview, setImagePreview] = useState<string | null>(initialImage);
+  const [isCheckingQuality, setIsCheckingQuality] = useState<boolean>(false);
+  const [qualityResult, setQualityResult] = useState<QualityAnalysisResult | null>(null);
+  const [allowOverride, setAllowOverride] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (initialImage) {
+      runQualityCheck(initialImage);
+    }
+  }, [initialImage]);
+
+  const runQualityCheck = async (dataUrl: string) => {
+    setIsCheckingQuality(true);
+    setAllowOverride(false);
+    try {
+      const result = await validateRetinalImageQuality(dataUrl);
+      setQualityResult(result);
+    } catch {
+      setQualityResult(null);
+    } finally {
+      setIsCheckingQuality(false);
+    }
+  };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -30,12 +53,15 @@ export const SimpleUploadView: React.FC<SimpleUploadViewProps> = ({
       const dataUrl = reader.result as string;
       setImagePreview(dataUrl);
       onImageSelected(dataUrl);
+      runQualityCheck(dataUrl);
     };
     reader.readAsDataURL(file);
   };
 
   const handleClearImage = () => {
     setImagePreview(null);
+    setQualityResult(null);
+    setAllowOverride(false);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -81,7 +107,7 @@ export const SimpleUploadView: React.FC<SimpleUploadViewProps> = ({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left Column (5 Cols): Comprehensive Patient Details */}
+        {/* Left Column (6 Cols): Comprehensive Patient Details */}
         <div className="lg:col-span-6 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-6">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
@@ -161,7 +187,8 @@ export const SimpleUploadView: React.FC<SimpleUploadViewProps> = ({
                           : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                       }`}
                     >
-                      OD (Right)
+                      <span className="material-symbols-outlined text-[14px]">visibility</span>
+                      Right (OD)
                     </button>
                     <button
                       type="button"
@@ -172,24 +199,25 @@ export const SimpleUploadView: React.FC<SimpleUploadViewProps> = ({
                           : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                       }`}
                     >
-                      OS (Left)
+                      <span className="material-symbols-outlined text-[14px]">visibility</span>
+                      Left (OS)
                     </button>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Section 2: Diabetes History & Glycemic Control */}
+            {/* Section 2: Diabetes History & Blood Sugar */}
             <div className="space-y-3 pt-2 border-t border-slate-100">
               <span className="text-[11px] uppercase font-extrabold text-slate-400 tracking-wider block">
-                2. Diabetes History &amp; Glycemic Control
+                2. Diabetes &amp; Glycemic Parameters
               </span>
 
               <div className="grid grid-cols-2 gap-3">
                 {/* Diabetes Type */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
-                    Diabetes Diagnosis
+                    Diabetes Classification
                   </label>
                   <select
                     value={patientDetails.diabetesType}
@@ -200,14 +228,14 @@ export const SimpleUploadView: React.FC<SimpleUploadViewProps> = ({
                     <option value="Type 1">Type 1 Diabetes</option>
                     <option value="Gestational">Gestational Diabetes</option>
                     <option value="Pre-diabetes">Pre-diabetes</option>
-                    <option value="None">No Diabetes (General Eye Exam)</option>
+                    <option value="None / Not Diagnosed">None / Not Diagnosed</option>
                   </select>
                 </div>
 
                 {/* Duration */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
-                    Duration (Years)
+                    Duration (Years Diagnosed)
                   </label>
                   <input
                     type="number"
@@ -215,24 +243,23 @@ export const SimpleUploadView: React.FC<SimpleUploadViewProps> = ({
                     max={80}
                     value={patientDetails.diabetesDurationYears}
                     onChange={(e) => updateField('diabetesDurationYears', Math.max(0, parseInt(e.target.value) || 0))}
-                    placeholder="e.g. 12"
                     className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                {/* Blood Sugar Level */}
+                {/* Blood Sugar */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
-                    Blood Sugar (mg/dL)
+                    Current Blood Sugar (mg/dL)
                   </label>
                   <input
                     type="number"
                     min={40}
                     max={600}
                     value={patientDetails.bloodSugarLevel}
-                    onChange={(e) => updateField('bloodSugarLevel', parseInt(e.target.value) || 0)}
+                    onChange={(e) => updateField('bloodSugarLevel', Math.max(0, parseInt(e.target.value) || 0))}
                     placeholder="e.g. 154"
                     className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
@@ -246,10 +273,10 @@ export const SimpleUploadView: React.FC<SimpleUploadViewProps> = ({
                   <input
                     type="number"
                     step="0.1"
-                    min={3.5}
+                    min={3.0}
                     max={20.0}
                     value={patientDetails.hba1c}
-                    onChange={(e) => updateField('hba1c', parseFloat(e.target.value) || 0)}
+                    onChange={(e) => updateField('hba1c', Math.max(0, parseFloat(e.target.value) || 0))}
                     placeholder="e.g. 8.2"
                     className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
@@ -257,18 +284,26 @@ export const SimpleUploadView: React.FC<SimpleUploadViewProps> = ({
               </div>
             </div>
 
-            {/* Section 3: Medication List */}
-            <div className="space-y-2 pt-2 border-t border-slate-100">
+            {/* Section 3: Medication Regimens */}
+            <div className="space-y-3 pt-2 border-t border-slate-100">
               <span className="text-[11px] uppercase font-extrabold text-slate-400 tracking-wider block">
-                3. Medication List
+                3. Medications &amp; Systemic Treatments
               </span>
 
+              {/* Diabetes Medications Chips */}
               <div>
-                <span className="block font-bold text-slate-700 mb-1.5 text-[11px]">
-                  Diabetes Treatments:
-                </span>
+                <label className="block font-bold text-slate-700 mb-1.5">
+                  Diabetes Medications
+                </label>
                 <div className="flex flex-wrap gap-1.5">
-                  {['Insulin Injections', 'Metformin', 'Sulfonylureas', 'SGLT2 Inhibitor', 'GLP-1 Agonist', 'DPP-4 Inhibitor'].map((med) => {
+                  {[
+                    'Insulin Injections',
+                    'Metformin',
+                    'Sulfonylureas (Glipizide/Glimepiride)',
+                    'SGLT2 Inhibitors (Jardiance/Farxiga)',
+                    'GLP-1 RA (Ozempic/Trulicity)',
+                    'DPP-4 Inhibitors (Januvia)'
+                  ].map((med) => {
                     const active = patientDetails.diabetesMedications.includes(med);
                     return (
                       <button
@@ -288,12 +323,19 @@ export const SimpleUploadView: React.FC<SimpleUploadViewProps> = ({
                 </div>
               </div>
 
-              <div className="pt-1">
-                <span className="block font-bold text-slate-700 mb-1.5 text-[11px]">
-                  Systemic Medications (Blood Thinners / Cardiovascular):
-                </span>
+              {/* Systemic Medications / Blood Thinners */}
+              <div>
+                <label className="block font-bold text-slate-700 mb-1.5">
+                  Systemic Medications &amp; Blood Thinners
+                </label>
                 <div className="flex flex-wrap gap-1.5">
-                  {['Blood Thinners (Aspirin/Clopidogrel)', 'ACE Inhibitor / ARB', 'Beta Blocker', 'Statin / Lipid Lowering'].map((med) => {
+                  {[
+                    'Blood Thinners (Aspirin/Clopidogrel)',
+                    'Anticoagulants (Warfarin/Eliquis)',
+                    'ACE Inhibitor / ARB',
+                    'Beta Blocker / Calcium Blocker',
+                    'Statin (Cholesterol lowering)'
+                  ].map((med) => {
                     const active = patientDetails.systemicMedications.includes(med);
                     return (
                       <button
@@ -302,7 +344,7 @@ export const SimpleUploadView: React.FC<SimpleUploadViewProps> = ({
                         onClick={() => toggleArrayItem('systemicMedications', med)}
                         className={`px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors cursor-pointer ${
                           active
-                            ? 'bg-slate-800 text-white border-slate-800 shadow-xs'
+                            ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
                             : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
                         }`}
                       >
@@ -317,7 +359,7 @@ export const SimpleUploadView: React.FC<SimpleUploadViewProps> = ({
             {/* Section 4: Systemic Health & Reproductive Status */}
             <div className="space-y-3 pt-2 border-t border-slate-100">
               <span className="text-[11px] uppercase font-extrabold text-slate-400 tracking-wider block">
-                4. Systemic Health &amp; Reproductive Status
+                4. Cardiovascular, Renal &amp; Gestational Status
               </span>
 
               <div className="grid grid-cols-2 gap-3">
@@ -338,15 +380,15 @@ export const SimpleUploadView: React.FC<SimpleUploadViewProps> = ({
                 {/* Kidney Function Status */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
-                    Kidney Function
+                    Kidney Status / Nephropathy
                   </label>
                   <select
                     value={patientDetails.kidneyFunctionStatus}
                     onChange={(e) => updateField('kidneyFunctionStatus', e.target.value as PatientDetails['kidneyFunctionStatus'])}
                     className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   >
-                    <option value="Normal / Preserved">Normal / Preserved Function</option>
-                    <option value="Microalbuminuria">Microalbuminuria (Early Nephropathy)</option>
+                    <option value="Normal / Preserved">Normal / Preserved</option>
+                    <option value="Microalbuminuria">Microalbuminuria</option>
                     <option value="Macroalbuminuria / Proteinuria">Macroalbuminuria / Proteinuria</option>
                     <option value="Chronic Kidney Disease (CKD)">Chronic Kidney Disease (CKD)</option>
                     <option value="Unknown / Not Tested">Unknown / Not Tested</option>
@@ -409,7 +451,7 @@ export const SimpleUploadView: React.FC<SimpleUploadViewProps> = ({
           </div>
         </div>
 
-        {/* Right Column (6 Cols): ONLY Upload Image Option */}
+        {/* Right Column (6 Cols): ONLY Upload Image Option + Automated Quality Alert */}
         <div className="lg:col-span-6 space-y-6">
           <input
             type="file"
@@ -450,11 +492,19 @@ export const SimpleUploadView: React.FC<SimpleUploadViewProps> = ({
               </div>
             </div>
           ) : (
-            /* Image Preview Card */
+            /* Image Preview Card with Quality Analysis Alert */
             <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-5">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                  <span className={`w-2.5 h-2.5 rounded-full ${
+                    isCheckingQuality
+                      ? 'bg-blue-500 animate-ping'
+                      : qualityResult?.status === 'rejected'
+                      ? 'bg-rose-600'
+                      : qualityResult?.status === 'warning'
+                      ? 'bg-amber-500'
+                      : 'bg-emerald-500'
+                  }`}></span>
                   <h3 className="font-bold text-slate-900 text-sm">Uploaded Retinal Photograph</h3>
                 </div>
                 <span className="text-[11px] font-semibold text-slate-500">
@@ -469,10 +519,108 @@ export const SimpleUploadView: React.FC<SimpleUploadViewProps> = ({
                   alt="Fundus Preview"
                   className="w-full h-full object-contain"
                 />
+
+                {/* Quality Scan Overlay */}
+                {isCheckingQuality && (
+                  <div className="absolute inset-0 bg-black/60 backdrop-blur-xs flex flex-col items-center justify-center text-white gap-2">
+                    <span className="material-symbols-outlined text-blue-400 text-[32px] animate-spin">progress_activity</span>
+                    <span className="text-xs font-bold">Scanning Optical Sharpness &amp; Quality...</span>
+                  </div>
+                )}
+
                 <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-xs text-white text-[10px] font-mono px-2.5 py-1 rounded-md">
                   45° Fundus Field Loaded
                 </div>
+
+                {qualityResult && !isCheckingQuality && (
+                  <div className={`absolute top-3 right-3 text-[10px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 shadow-md ${
+                    qualityResult.status === 'excellent'
+                      ? 'bg-emerald-600 text-white'
+                      : qualityResult.status === 'acceptable'
+                      ? 'bg-blue-600 text-white'
+                      : qualityResult.status === 'warning'
+                      ? 'bg-amber-500 text-white'
+                      : 'bg-rose-600 text-white animate-bounce'
+                  }`}>
+                    <span className="material-symbols-outlined text-[14px]">
+                      {qualityResult.status === 'rejected' ? 'error' : qualityResult.status === 'warning' ? 'warning' : 'verified'}
+                    </span>
+                    Quality Score: {qualityResult.score}/100
+                  </div>
+                )}
               </div>
+
+              {/* Automated Real-Time Quality Alert Box */}
+              {qualityResult && !isCheckingQuality && (
+                <div className={`p-4 rounded-xl border transition-all ${
+                  qualityResult.status === 'rejected'
+                    ? 'bg-rose-50 border-rose-300 text-rose-950'
+                    : qualityResult.status === 'warning'
+                    ? 'bg-amber-50 border-amber-300 text-amber-950'
+                    : 'bg-emerald-50 border-emerald-300 text-emerald-950'
+                }`}>
+                  <div className="flex items-start gap-3">
+                    <span className={`material-symbols-outlined text-[24px] shrink-0 mt-0.5 ${
+                      qualityResult.status === 'rejected'
+                        ? 'text-rose-600'
+                        : qualityResult.status === 'warning'
+                        ? 'text-amber-600'
+                        : 'text-emerald-600'
+                    }`}>
+                      {qualityResult.status === 'rejected'
+                        ? 'cancel'
+                        : qualityResult.status === 'warning'
+                        ? 'warning'
+                        : 'check_circle'}
+                    </span>
+
+                    <div className="space-y-1.5 flex-1">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-extrabold text-xs">
+                          {qualityResult.status === 'rejected' && '⚠️ IMAGE REJECTED: BLURRY OR INVALID PHOTOGRAPH'}
+                          {qualityResult.status === 'warning' && '⚠️ IMAGE WARNING: SUB-OPTIMAL OPTICAL QUALITY'}
+                          {(qualityResult.status === 'acceptable' || qualityResult.status === 'excellent') && '✓ IMAGE QUALITY VERIFIED'}
+                        </h4>
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-white/70">
+                          Blur Metric: {qualityResult.metrics.laplacianVariance}
+                        </span>
+                      </div>
+
+                      {qualityResult.issues.length > 0 ? (
+                        <div className="space-y-1">
+                          <ul className="text-[11px] list-disc list-inside space-y-0.5">
+                            {qualityResult.issues.map((issue, idx) => (
+                              <li key={idx} className="font-semibold">{issue}</li>
+                            ))}
+                          </ul>
+                          <div className="text-[11px] opacity-90 pt-1 border-t border-black/10">
+                            <strong>Recommendation:</strong> {qualityResult.recommendations.join(' ')}
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-[11px]">
+                          Vascular structure and optical sharpness are clear for MATLAB contrast enhancement and deep learning feature extraction.
+                        </p>
+                      )}
+
+                      {/* Override option for clinical screeners if image is rejected */}
+                      {qualityResult.status === 'rejected' && (
+                        <div className="pt-2 flex items-center justify-between gap-2 border-t border-rose-200 mt-2">
+                          <label className="text-[10px] text-rose-800 flex items-center gap-1.5 cursor-pointer font-medium">
+                            <input
+                              type="checkbox"
+                              checked={allowOverride}
+                              onChange={(e) => setAllowOverride(e.target.checked)}
+                              className="rounded text-rose-600 focus:ring-rose-500"
+                            />
+                            Force Screener Override (Proceed anyway despite blur/quality warning)
+                          </label>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Action Buttons: [ CHANGE IMAGE ] [ START ANALYSIS ] */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
@@ -488,32 +636,22 @@ export const SimpleUploadView: React.FC<SimpleUploadViewProps> = ({
                 <button
                   type="button"
                   onClick={onStartAnalysis}
-                  className="w-full sm:w-auto px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs sm:text-sm rounded-xl shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+                  disabled={qualityResult?.status === 'rejected' && !allowOverride}
+                  className={`w-full sm:w-auto px-8 py-3.5 font-extrabold text-xs sm:text-sm rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                    qualityResult?.status === 'rejected' && !allowOverride
+                      ? 'bg-slate-300 text-slate-500 cursor-not-allowed shadow-none'
+                      : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-600/30 active:scale-98'
+                  }`}
                 >
                   <span className="material-symbols-outlined text-[20px]">biotech</span>
-                  START ANALYSIS
+                  {qualityResult?.status === 'rejected' && !allowOverride
+                    ? 'CANNOT ANALYZE (RE-UPLOAD)'
+                    : 'START ANALYSIS'}
                   <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
                 </button>
               </div>
             </div>
           )}
-
-          {/* Quick Summary of MATLAB Processing Architecture */}
-          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-2.5 text-xs text-slate-600">
-            <span className="font-bold text-slate-800 flex items-center gap-1.5 text-[12px]">
-              <span className="material-symbols-outlined text-blue-600 text-[18px]">settings_suggest</span>
-              MATLAB Automated Image Pipeline
-            </span>
-            <p className="text-[11px] leading-relaxed text-slate-500">
-              When analysis begins, the image is passed through MATLAB image processing algorithms:
-            </p>
-            <div className="font-mono text-[10px] bg-slate-900 text-slate-100 p-3 rounded-lg overflow-x-auto">
-              <code>G = I(:,:,2); background = imgaussfilt(G, 45);</code><br/>
-              <code>Gnorm = imdivide(G, background, 'scaled');</code><br/>
-              <code>Gclahe = adapthisteq(Gnorm, 'NumTiles', [8 8], 'ClipLimit', 0.02);</code><br/>
-              <code>Gdenoise = medfilt2(Gclahe, [3 3]); % Black &amp; White Enhancement</code>
-            </div>
-          </div>
         </div>
       </div>
     </div>

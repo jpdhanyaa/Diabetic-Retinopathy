@@ -11,7 +11,7 @@ export type DRSeverity = 0 | 1 | 2 | 3 | 4;
 
 export interface Lesion {
   id: string;
-  type: 'microaneurysm' | 'hemorrhage' | 'hard_exudate' | 'cotton_wool_spot' | 'neovascularization' | 'optic_disc' | 'macula';
+  type: 'microaneurysm' | 'hemorrhage' | 'hard_exudate' | 'cotton_wool_spot' | 'neovascularization' | 'optic_disc' | 'macula' | 'irma' | 'venous_bead' | 'drusen';
   label: string;
   x: number; // percentage 0-100
   y: number; // percentage 0-100
@@ -19,6 +19,29 @@ export interface Lesion {
   height: number; // percentage
   severity: 'low' | 'medium' | 'high';
   notes: string;
+}
+
+export interface DifferentialDiagnosisItem {
+  condition: 'Diabetic Retinopathy' | 'Hypertensive Retinopathy' | 'Glaucoma' | 'Macular Degeneration' | 'Retinal Detachment' | 'Optic Neuritis';
+  probability: number; // 0-100
+  status: 'Primary Diagnosis' | 'Secondary Finding' | 'Ruled Out' | 'Low Risk';
+  keyDifferentiators: string;
+  hospitalReference: string;
+}
+
+export interface LesionQuantitativeBreakdown {
+  microaneurysmsCount: number;
+  blotHemorrhagesCount: number;
+  hardExudatesAreaMm2: number;
+  cottonWoolSpotsCount: number;
+  irmaDetected: boolean;
+  venousBeadingDetected: boolean;
+  neovascularizationNvd: boolean;
+  neovascularizationNve: boolean;
+  opticCupToDiscRatio: number;
+  macularDrusenDetected: boolean;
+  retinalTearOrDetachment: boolean;
+  opticDiscMarginSharpness: 'Sharp / Normal' | 'Blurred / Edematous';
 }
 
 export interface DRAnalysisResult {
@@ -46,6 +69,15 @@ export interface DRAnalysisResult {
   eye: 'OD (Right Eye)' | 'OS (Left Eye)';
   etdrsScore: number; // 10 - 85 scale
   matlabLogs?: string[];
+  // Hospital-fed ML Knowledge & Multi-Condition Differential Diagnosis
+  differentialDiagnosis: DifferentialDiagnosisItem[];
+  lesionBreakdown: LesionQuantitativeBreakdown;
+  hospitalSources: {
+    barbaraDavisCenter: boolean;
+    retinaTodayAtlas: boolean;
+    eye7HospitalsBenchmark: boolean;
+    gettyMedicalArchives: boolean;
+  };
 }
 
 export interface PatientDetails {
@@ -79,3 +111,4 @@ export interface ScreenerUser {
   role: string;
   organization: string;
 }
+

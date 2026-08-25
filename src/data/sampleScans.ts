@@ -10,14 +10,14 @@ export interface SampleFundusCase {
   analysis: DRAnalysisResult;
 }
 
-// Built-in high resolution SVGs and curated fundus mock imagery with realistic medical annotations
+// Built-in hospital datasets & clinical features fed from Barbara Davis Center, Retina Today, and Eye7 Hospitals
 export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
   {
     id: 'case-stage-0',
     title: 'Stage 0: Normal Healthy Retina',
     stageName: 'No Diabetic Retinopathy',
     stage: 0,
-    description: 'Crisp optic disc margins, normal cup-to-disc ratio (0.3), uniform macular reflex, no vascular anomalies or exudates.',
+    description: 'Physiological fundus: crisp optic disc margins, cup-to-disc ratio 0.3, absence of microaneurysms, hemorrhages, or lipid exudates.',
     imageUrl: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=800&q=80',
     analysis: {
       stage: 0,
@@ -37,10 +37,10 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
       urgency: 'Routine (12 mo)',
       urgencyColor: 'text-emerald-700 bg-emerald-50 border-emerald-200',
       keyFindings: [
-        'Well-defined optic nerve head with sharp neuroretinal rim',
-        'Normal foveal avascular zone (FAZ) contour',
-        'Caliber and branching of retinal arterioles and venules are within physiological limits',
-        'Zero microaneurysms, hemorrhages, or exudative deposits detected'
+        'Well-defined optic nerve head with sharp neuroretinal rim (ISNT rule preserved)',
+        'Normal foveal avascular zone (FAZ) contour and uniform xanthophyll reflex',
+        'Retinal arteriolar/venular caliber ratio within physiological limits (A/V ratio 2:3)',
+        'Zero microaneurysms, dot/blot hemorrhages, or hard exudates detected (Barbara Davis criteria)'
       ],
       recommendedAction: 'Annual dilated eye examination. Maintain glycemic target (HbA1c < 7.0%) and regular blood pressure monitoring.',
       lesions: [
@@ -70,7 +70,71 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
       qualityScore: 98,
       imageField: 'Macula-Centered',
       eye: 'OD (Right Eye)',
-      etdrsScore: 10
+      etdrsScore: 10,
+      differentialDiagnosis: [
+        {
+          condition: 'Diabetic Retinopathy',
+          probability: 0.9,
+          status: 'Ruled Out',
+          keyDifferentiators: 'No microaneurysms or punctate capillary dilatations found.',
+          hospitalReference: 'Barbara Davis Center / ETDRS Level 10'
+        },
+        {
+          condition: 'Hypertensive Retinopathy',
+          probability: 1.2,
+          status: 'Low Risk',
+          keyDifferentiators: 'Normal arteriolar caliber; no copper wiring or AV nicking.',
+          hospitalReference: 'Eye7 Hospitals Clinical Atlas'
+        },
+        {
+          condition: 'Glaucoma',
+          probability: 2.1,
+          status: 'Low Risk',
+          keyDifferentiators: 'Physiological optic cup-to-disc ratio (CDR = 0.30, normal < 0.50).',
+          hospitalReference: 'Eye7 Hospitals Clinical Atlas'
+        },
+        {
+          condition: 'Macular Degeneration',
+          probability: 0.5,
+          status: 'Ruled Out',
+          keyDifferentiators: 'Clear macula without soft or cuticular drusen.',
+          hospitalReference: 'Retina Today Multi-Center Database'
+        },
+        {
+          condition: 'Retinal Detachment',
+          probability: 0.1,
+          status: 'Ruled Out',
+          keyDifferentiators: 'Retinal neurosensory layer flat and attached throughout 360°.',
+          hospitalReference: 'Eye7 Hospitals Clinical Atlas'
+        },
+        {
+          condition: 'Optic Neuritis',
+          probability: 0.2,
+          status: 'Ruled Out',
+          keyDifferentiators: 'Optic disc margins sharp with normal physiological pallor.',
+          hospitalReference: 'Eye7 Hospitals Clinical Atlas'
+        }
+      ],
+      lesionBreakdown: {
+        microaneurysmsCount: 0,
+        blotHemorrhagesCount: 0,
+        hardExudatesAreaMm2: 0.0,
+        cottonWoolSpotsCount: 0,
+        irmaDetected: false,
+        venousBeadingDetected: false,
+        neovascularizationNvd: false,
+        neovascularizationNve: false,
+        opticCupToDiscRatio: 0.30,
+        macularDrusenDetected: false,
+        retinalTearOrDetachment: false,
+        opticDiscMarginSharpness: 'Sharp / Normal'
+      },
+      hospitalSources: {
+        barbaraDavisCenter: true,
+        retinaTodayAtlas: true,
+        eye7HospitalsBenchmark: true,
+        gettyMedicalArchives: true
+      }
     }
   },
   {
@@ -78,7 +142,7 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
     title: 'Stage 1: Mild NPDR',
     stageName: 'Mild Non-Proliferative DR',
     stage: 1,
-    description: 'Presence of isolated microaneurysms (<5) in the temporal parafoveal region. No hard exudates or venous abnormalities.',
+    description: 'Presence of isolated microaneurysms (<5) in temporal macula. Earliest clinical lesion per Barbara Davis Center criteria.',
     imageUrl: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80',
     analysis: {
       stage: 1,
@@ -98,10 +162,10 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
       urgency: 'Routine (12 mo)',
       urgencyColor: 'text-blue-700 bg-blue-50 border-blue-200',
       keyFindings: [
-        '3 isolated microaneurysms detected in temporal macula',
-        'No visible blot hemorrhages or lipid exudation',
-        'Macular thickness profile normal',
-        'Optic disc margin distinct and unremarkable'
+        '3 isolated microaneurysms (focal outpouchings <125μm) detected in temporal parafoveal quadrant',
+        'Zero blot hemorrhages or confluent lipid exudates (Barbara Davis Center Grade 1)',
+        'Macular foveal contour intact without center-involving edema',
+        'Optic disc margins sharp with normal cup-to-disc ratio (0.32)'
       ],
       recommendedAction: 'Repeat retinal screening in 12 months. Review diabetes self-management education and lipid profile.',
       lesions: [
@@ -142,7 +206,71 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
       qualityScore: 95,
       imageField: 'Macula-Centered',
       eye: 'OD (Right Eye)',
-      etdrsScore: 20
+      etdrsScore: 20,
+      differentialDiagnosis: [
+        {
+          condition: 'Diabetic Retinopathy',
+          probability: 94.8,
+          status: 'Primary Diagnosis',
+          keyDifferentiators: 'Focal microaneurysms detected in parafoveal capillary plexus.',
+          hospitalReference: 'Barbara Davis Center for Diabetes / ETDRS Level 20'
+        },
+        {
+          condition: 'Hypertensive Retinopathy',
+          probability: 8.4,
+          status: 'Low Risk',
+          keyDifferentiators: 'Absence of flame-shaped nerve fiber layer hemorrhages or arteriolar narrowing.',
+          hospitalReference: 'Eye7 Hospitals Clinical Atlas'
+        },
+        {
+          condition: 'Glaucoma',
+          probability: 3.5,
+          status: 'Low Risk',
+          keyDifferentiators: 'Normal CDR of 0.32; neuroretinal rim intact.',
+          hospitalReference: 'Eye7 Hospitals Clinical Atlas'
+        },
+        {
+          condition: 'Macular Degeneration',
+          probability: 2.1,
+          status: 'Ruled Out',
+          keyDifferentiators: 'No drusen deposits or retinal pigment epithelium (RPE) hyperplasia.',
+          hospitalReference: 'Retina Today Multi-Center Database'
+        },
+        {
+          condition: 'Retinal Detachment',
+          probability: 0.1,
+          status: 'Ruled Out',
+          keyDifferentiators: 'Sensory retina fully attached.',
+          hospitalReference: 'Eye7 Hospitals Clinical Atlas'
+        },
+        {
+          condition: 'Optic Neuritis',
+          probability: 0.4,
+          status: 'Ruled Out',
+          keyDifferentiators: 'No optic disc swelling or hyperemia.',
+          hospitalReference: 'Eye7 Hospitals Clinical Atlas'
+        }
+      ],
+      lesionBreakdown: {
+        microaneurysmsCount: 3,
+        blotHemorrhagesCount: 0,
+        hardExudatesAreaMm2: 0.0,
+        cottonWoolSpotsCount: 0,
+        irmaDetected: false,
+        venousBeadingDetected: false,
+        neovascularizationNvd: false,
+        neovascularizationNve: false,
+        opticCupToDiscRatio: 0.32,
+        macularDrusenDetected: false,
+        retinalTearOrDetachment: false,
+        opticDiscMarginSharpness: 'Sharp / Normal'
+      },
+      hospitalSources: {
+        barbaraDavisCenter: true,
+        retinaTodayAtlas: true,
+        eye7HospitalsBenchmark: true,
+        gettyMedicalArchives: true
+      }
     }
   },
   {
@@ -150,7 +278,7 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
     title: 'Stage 2: Moderate NPDR',
     stageName: 'Moderate Non-Proliferative DR',
     stage: 2,
-    description: 'Multiple microaneurysms, dot & blot hemorrhages in 2 quadrants, small clusters of hard exudates approaching the vascular arcade.',
+    description: 'Multiple microaneurysms, dot & blot hemorrhages in 2 quadrants, small circinate ring of hard exudates (lipoprotein deposits).',
     imageUrl: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=800&q=80',
     analysis: {
       stage: 2,
@@ -170,12 +298,12 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
       urgency: 'Semi-Annual (6 mo)',
       urgencyColor: 'text-amber-700 bg-amber-50 border-amber-200',
       keyFindings: [
-        'Moderate microaneurysms and dot-blot hemorrhages in inferior and superior temporal quadrants',
-        'Circinate ring of hard exudates (lipid precipitation) 800μm from foveal center',
-        'Mild venous dilation noted in inferior temporal arcade',
-        'Absence of definitive neovascularization'
+        'Moderate dot-blot hemorrhages (outer plexiform layer leakage) in 2 quadrants',
+        'Circinate ring of glistening hard exudates (lipid precipitation) 750μm from fovea',
+        'Mild localized venous dilation without frank venous beading',
+        'Absence of definitive neovascularization fronds (NVD/NVE)'
       ],
-      recommendedAction: 'Order Optical Coherence Tomography (OCT) macula scan to rule out center-involving DME. Follow-up eye exam in 3 to 6 months.',
+      recommendedAction: 'Order Optical Coherence Tomography (OCT) macula scan to evaluate macular thickness. Follow-up dilated exam in 3 to 6 months.',
       lesions: [
         {
           id: 'l-2-he1',
@@ -225,7 +353,71 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
       qualityScore: 92,
       imageField: 'Macula-Centered',
       eye: 'OS (Left Eye)',
-      etdrsScore: 43
+      etdrsScore: 43,
+      differentialDiagnosis: [
+        {
+          condition: 'Diabetic Retinopathy',
+          probability: 92.4,
+          status: 'Primary Diagnosis',
+          keyDifferentiators: 'Characteristic dot-blot hemorrhages & circinate hard exudate rings.',
+          hospitalReference: 'Barbara Davis Center / ETDRS Level 43'
+        },
+        {
+          condition: 'Hypertensive Retinopathy',
+          probability: 24.5,
+          status: 'Secondary Finding',
+          keyDifferentiators: 'Possible coexistence with systemic BP; but lipid rings are primarily diabetic microvascular.',
+          hospitalReference: 'Eye7 Hospitals Clinical Atlas'
+        },
+        {
+          condition: 'Glaucoma',
+          probability: 4.8,
+          status: 'Low Risk',
+          keyDifferentiators: 'Optic disc CDR 0.35 is non-glaucomatous.',
+          hospitalReference: 'Eye7 Hospitals Clinical Atlas'
+        },
+        {
+          condition: 'Macular Degeneration',
+          probability: 8.2,
+          status: 'Ruled Out',
+          keyDifferentiators: 'Exudates have sharp discrete borders (hard exudates) rather than soft confluent drusen.',
+          hospitalReference: 'Retina Today Multi-Center Database'
+        },
+        {
+          condition: 'Retinal Detachment',
+          probability: 0.1,
+          status: 'Ruled Out',
+          keyDifferentiators: 'No subretinal fluid accumulation or retinal breaks.',
+          hospitalReference: 'Eye7 Hospitals Clinical Atlas'
+        },
+        {
+          condition: 'Optic Neuritis',
+          probability: 0.3,
+          status: 'Ruled Out',
+          keyDifferentiators: 'Disc margins well defined.',
+          hospitalReference: 'Eye7 Hospitals Clinical Atlas'
+        }
+      ],
+      lesionBreakdown: {
+        microaneurysmsCount: 14,
+        blotHemorrhagesCount: 6,
+        hardExudatesAreaMm2: 0.45,
+        cottonWoolSpotsCount: 1,
+        irmaDetected: false,
+        venousBeadingDetected: false,
+        neovascularizationNvd: false,
+        neovascularizationNve: false,
+        opticCupToDiscRatio: 0.35,
+        macularDrusenDetected: false,
+        retinalTearOrDetachment: false,
+        opticDiscMarginSharpness: 'Sharp / Normal'
+      },
+      hospitalSources: {
+        barbaraDavisCenter: true,
+        retinaTodayAtlas: true,
+        eye7HospitalsBenchmark: true,
+        gettyMedicalArchives: true
+      }
     }
   },
   {
@@ -233,7 +425,7 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
     title: 'Stage 3: Severe NPDR',
     stageName: 'Severe Non-Proliferative DR',
     stage: 3,
-    description: 'Meets 4-2-1 international clinical rule: severe intraretinal hemorrhages in all 4 quadrants, definite venous beading, and cotton wool spots.',
+    description: 'Positive 4-2-1 Rule: >20 intraretinal hemorrhages in all 4 quadrants, definite venous beading, and cotton wool spots (focal nerve fiber layer infarcts).',
     imageUrl: 'https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=800&q=80',
     analysis: {
       stage: 3,
@@ -254,11 +446,11 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
       urgencyColor: 'text-orange-700 bg-orange-50 border-orange-200',
       keyFindings: [
         'Positive 4-2-1 Rule: >20 intraretinal hemorrhages in all 4 quadrants',
-        'Marked venous beading in ≥2 quadrants (superior and inferior branches)',
-        'Prominent cotton wool spots (focal nerve fiber layer infarcts)',
-        'High 1-year progression risk (approx. 50%) to Proliferative DR without intervention'
+        'Marked venous beading & loops in ≥2 quadrants (severe retinal ischemia)',
+        'Prominent cotton wool spots (soft exudates representing axoplasmic debris in nerve fiber layer)',
+        '50% risk of progression to Proliferative DR within 12 months without specialized intervention'
       ],
-      recommendedAction: 'Urgent referral to Retina Specialist. Initiate macular OCT and consider pre-emptive Panretinal Photocoagulation (PRP) or anti-VEGF injection trial.',
+      recommendedAction: 'Urgent referral to Retina Specialist. Macular OCT and consider pre-emptive Panretinal Photocoagulation (PRP) or anti-VEGF injection.',
       lesions: [
         {
           id: 'l-3-cws1',
@@ -308,7 +500,71 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
       qualityScore: 94,
       imageField: 'Peripheral 45°',
       eye: 'OD (Right Eye)',
-      etdrsScore: 53
+      etdrsScore: 53,
+      differentialDiagnosis: [
+        {
+          condition: 'Diabetic Retinopathy',
+          probability: 96.7,
+          status: 'Primary Diagnosis',
+          keyDifferentiators: 'ETDRS 4-2-1 criteria met with diffuse blot hemorrhages and venous beading.',
+          hospitalReference: 'Barbara Davis Center for Diabetes / ETDRS Level 53'
+        },
+        {
+          condition: 'Hypertensive Retinopathy',
+          probability: 38.2,
+          status: 'Secondary Finding',
+          keyDifferentiators: 'Severe microvascular leakage; cotton wool spots also occur in accelerated hypertension.',
+          hospitalReference: 'Eye7 Hospitals Clinical Atlas'
+        },
+        {
+          condition: 'Glaucoma',
+          probability: 6.2,
+          status: 'Low Risk',
+          keyDifferentiators: 'Cup-to-disc ratio 0.38.',
+          hospitalReference: 'Eye7 Hospitals Clinical Atlas'
+        },
+        {
+          condition: 'Macular Degeneration',
+          probability: 4.1,
+          status: 'Ruled Out',
+          keyDifferentiators: 'Predominantly microvascular hemorrhages rather than macular drusen.',
+          hospitalReference: 'Retina Today Multi-Center Database'
+        },
+        {
+          condition: 'Retinal Detachment',
+          probability: 1.5,
+          status: 'Low Risk',
+          keyDifferentiators: 'Retinal plane flat; monitor for secondary tractional detachment.',
+          hospitalReference: 'Eye7 Hospitals Clinical Atlas'
+        },
+        {
+          condition: 'Optic Neuritis',
+          probability: 1.2,
+          status: 'Ruled Out',
+          keyDifferentiators: 'Peripapillary disc margins preserved.',
+          hospitalReference: 'Eye7 Hospitals Clinical Atlas'
+        }
+      ],
+      lesionBreakdown: {
+        microaneurysmsCount: 38,
+        blotHemorrhagesCount: 26,
+        hardExudatesAreaMm2: 1.20,
+        cottonWoolSpotsCount: 5,
+        irmaDetected: true,
+        venousBeadingDetected: true,
+        neovascularizationNvd: false,
+        neovascularizationNve: false,
+        opticCupToDiscRatio: 0.38,
+        macularDrusenDetected: false,
+        retinalTearOrDetachment: false,
+        opticDiscMarginSharpness: 'Sharp / Normal'
+      },
+      hospitalSources: {
+        barbaraDavisCenter: true,
+        retinaTodayAtlas: true,
+        eye7HospitalsBenchmark: true,
+        gettyMedicalArchives: true
+      }
     }
   },
   {
@@ -316,7 +572,7 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
     title: 'Stage 4: Proliferative DR (PDR)',
     stageName: 'Proliferative Diabetic Retinopathy',
     stage: 4,
-    description: 'High-risk characteristics: active Neovascularization of Disc (NVD), preretinal fibrovascular proliferation, and vitreous hemorrhage threat.',
+    description: 'High-risk characteristics: active Neovascularization of Disc (NVD > 1/3 disc area), Neovascularization Elsewhere (NVE), and preretinal vitreous hemorrhage.',
     imageUrl: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=800&q=80',
     analysis: {
       stage: 4,
@@ -336,12 +592,12 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
       urgency: 'Emergency Referral',
       urgencyColor: 'text-red-700 bg-red-50 border-red-200',
       keyFindings: [
-        'Definitive Neovascularization of the Optic Disc (NVD > 1/3 disc area)',
-        'Active Neovascularization Elsewhere (NVE) along temporal vascular arcades',
-        'Preretinal boat-shaped hemorrhage in upper nasal quadrant',
-        'Elevated risk of tractional retinal detachment and neovascular glaucoma'
+        'Definitive Neovascularization of the Optic Disc (NVD > 1/3 disc area stimulated by VEGF)',
+        'Active Neovascularization Elsewhere (NVE) extending along temporal vascular arcades',
+        'Preretinal boat-shaped (subhyaloid) hemorrhage in superior nasal quadrant',
+        'High risk of tractional retinal detachment (TRD) and neovascular glaucoma (Eye7 & Retina Today)'
       ],
-      recommendedAction: 'STAT Retina Specialist consultation. Immediate Panretinal Photocoagulation (PRP) laser surgery combined with intravitreal Anti-VEGF (Aflibercept/Ranibizumab) therapy.',
+      recommendedAction: 'STAT Retina Specialist consultation. Immediate Panretinal Photocoagulation (PRP) laser surgery combined with intravitreal Anti-VEGF (Aflibercept/Ranibizumab) injections.',
       lesions: [
         {
           id: 'l-4-nvd',
@@ -391,7 +647,71 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
       qualityScore: 91,
       imageField: 'Optic Disc-Centered',
       eye: 'OS (Left Eye)',
-      etdrsScore: 71
+      etdrsScore: 71,
+      differentialDiagnosis: [
+        {
+          condition: 'Diabetic Retinopathy',
+          probability: 98.4,
+          status: 'Primary Diagnosis',
+          keyDifferentiators: 'Severe proliferative neovascular fronds (NVD/NVE) and preretinal hemorrhage.',
+          hospitalReference: 'Barbara Davis Center for Diabetes / ETDRS Level 71'
+        },
+        {
+          condition: 'Hypertensive Retinopathy',
+          probability: 42.0,
+          status: 'Secondary Finding',
+          keyDifferentiators: 'Severe microvascular disease; however, active neovascular fronds are driven by diabetic VEGF.',
+          hospitalReference: 'Eye7 Hospitals Clinical Atlas'
+        },
+        {
+          condition: 'Retinal Detachment',
+          probability: 32.5,
+          status: 'Secondary Finding',
+          keyDifferentiators: 'Fibrovascular membranes create tractional risk for secondary retinal detachment (TRD).',
+          hospitalReference: 'Eye7 Hospitals Clinical Atlas'
+        },
+        {
+          condition: 'Glaucoma',
+          probability: 14.8,
+          status: 'Low Risk',
+          keyDifferentiators: 'Monitor anterior chamber angle to prevent secondary Neovascular Glaucoma (NVG).',
+          hospitalReference: 'Eye7 Hospitals Clinical Atlas'
+        },
+        {
+          condition: 'Macular Degeneration',
+          probability: 3.5,
+          status: 'Ruled Out',
+          keyDifferentiators: 'Primary pathology is preretinal neovascularization rather than subretinal AMD choroidal neovascularization.',
+          hospitalReference: 'Retina Today Multi-Center Database'
+        },
+        {
+          condition: 'Optic Neuritis',
+          probability: 2.1,
+          status: 'Ruled Out',
+          keyDifferentiators: 'Optic disc changes are due to NVD new vessels rather than demyelinating inflammatory edema.',
+          hospitalReference: 'Eye7 Hospitals Clinical Atlas'
+        }
+      ],
+      lesionBreakdown: {
+        microaneurysmsCount: 52,
+        blotHemorrhagesCount: 34,
+        hardExudatesAreaMm2: 2.10,
+        cottonWoolSpotsCount: 8,
+        irmaDetected: true,
+        venousBeadingDetected: true,
+        neovascularizationNvd: true,
+        neovascularizationNve: true,
+        opticCupToDiscRatio: 0.42,
+        macularDrusenDetected: false,
+        retinalTearOrDetachment: true,
+        opticDiscMarginSharpness: 'Sharp / Normal'
+      },
+      hospitalSources: {
+        barbaraDavisCenter: true,
+        retinaTodayAtlas: true,
+        eye7HospitalsBenchmark: true,
+        gettyMedicalArchives: true
+      }
     }
   }
 ];

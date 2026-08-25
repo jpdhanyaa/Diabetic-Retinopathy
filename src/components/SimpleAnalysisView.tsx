@@ -17,41 +17,53 @@ export const SimpleAnalysisView: React.FC<SimpleAnalysisViewProps> = ({
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [progressPercent, setProgressPercent] = useState<number>(10);
   const [matlabTerminalLines, setMatlabTerminalLines] = useState<string[]>([
-    '>> matlab -batch "processRetina(inputPath, outputPath)"',
-    '>> I = imread(inputPath);',
+    '>> clc; clear; close all;',
+    '>> I = imread(imagePath);',
     '>> I = imresize(I, [600 600]);'
   ]);
 
   const steps = [
     {
       id: 'upload',
-      title: 'Image Uploaded & Initialized',
-      desc: 'Fundus image converted to standardized 600x600 matrix resolution.',
-      matlabCmd: 'I = imresize(imread(inputPath), [600 600]);'
+      title: 'Image Load & Matrix Normalization',
+      desc: 'Fundus image read and resized to standardized [600 600] matrix.',
+      matlabCmd: 'I = imresize(imread(imagePath), [600 600]);',
+      cssFilter: 'grayscale(100%) contrast(100%) brightness(100%)'
     },
     {
       id: 'green_channel',
-      title: 'MATLAB Black & White Conversion (Green Channel G = I(:,:,2))',
+      title: 'Green Channel Extraction G = I(:,:,2)',
       desc: 'Isolates optical green wavelength where retinal vessels exhibit highest contrast.',
-      matlabCmd: 'G = I(:,:,2); % Black & White vessel luminance'
+      matlabCmd: 'G = I(:,:,2); % Black & White vessel luminance',
+      cssFilter: 'grayscale(100%) contrast(120%) brightness(105%)'
     },
     {
       id: 'illumination',
       title: 'Gaussian Illumination Flattening',
-      desc: 'Corrects non-uniform flash lighting with 45-pixel Gaussian low-pass filter.',
-      matlabCmd: 'background = imgaussfilt(G, 45); Gnorm = imdivide(G, background, \'scaled\');'
+      desc: 'Gaussian filter [51 51] with sigma 25 subtracted to remove non-uniform flash glare.',
+      matlabCmd: 'background = imfilter(Gdouble, fspecial(\'gaussian\', [51 51], 25), \'replicate\'); Gnorm = mat2gray(Gdouble - background);',
+      cssFilter: 'grayscale(100%) contrast(135%) brightness(95%)'
     },
     {
       id: 'clahe',
-      title: 'CLAHE Contrast Enhancement & Denoising',
-      desc: 'Adaptive histogram equalization (adapthisteq) & 3x3 median filter denoising.',
-      matlabCmd: 'Gclahe = adapthisteq(Gnorm, \'ClipLimit\', 0.02); Gdenoise = medfilt2(Gclahe, [3 3]);'
+      title: 'CLAHE Contrast Equalization',
+      desc: 'Adaptive histogram equalization (adapthisteq) with 8x8 tiles and 0.02 clip limit.',
+      matlabCmd: 'Gclahe = adapthisteq(Gnorm, \'NumTiles\', [8 8], \'ClipLimit\', 0.02);',
+      cssFilter: 'grayscale(100%) contrast(160%) brightness(90%)'
+    },
+    {
+      id: 'denoise',
+      title: '2D Median Filter Denoising & Imadjust',
+      desc: '3x3 median filtering (medfilt2) removes camera sensor artifacts followed by imadjust.',
+      matlabCmd: 'Gdenoise = medfilt2(Gclahe, [3 3]); Genhanced = imadjust(Gdenoise);',
+      cssFilter: 'grayscale(100%) contrast(180%) brightness(85%)'
     },
     {
       id: 'ai_inference',
-      title: 'AI Classification on Black & White Retinal Matrix',
-      desc: 'Deep convolutional neural network scans microaneurysms, hemorrhages & exudates.',
-      matlabCmd: 'drNet.classify(Gdenoise); % Generating ETDRS stage & confidence'
+      title: 'Deep AI Inference on Black & White Matrix',
+      desc: 'Scanning enhanced vessel matrix for microaneurysms, hemorrhages, and exudates.',
+      matlabCmd: 'drNet.classify(Genhanced); % Generating ETDRS stage & confidence',
+      cssFilter: 'grayscale(100%) contrast(185%) brightness(85%)'
     }
   ];
 
@@ -68,7 +80,7 @@ export const SimpleAnalysisView: React.FC<SimpleAnalysisViewProps> = ({
           return prev;
         }
       });
-    }, 1200);
+    }, 1100);
 
     const progressInterval = setInterval(() => {
       setProgressPercent((prev) => {
@@ -76,12 +88,12 @@ export const SimpleAnalysisView: React.FC<SimpleAnalysisViewProps> = ({
           clearInterval(progressInterval);
           setTimeout(() => {
             onAnalysisComplete();
-          }, 800);
+          }, 700);
           return 100;
         }
         return Math.min(100, prev + 3);
       });
-    }, 150);
+    }, 140);
 
     return () => {
       clearInterval(stepInterval);
@@ -89,19 +101,21 @@ export const SimpleAnalysisView: React.FC<SimpleAnalysisViewProps> = ({
     };
   }, []);
 
+  const activeFilter = steps[currentStep]?.cssFilter || 'grayscale(100%) contrast(160%) brightness(90%)';
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-8 animate-fade-in">
       {/* Title Header */}
       <div className="text-center space-y-2">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-bold">
           <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping"></span>
-          Automated Retinal Processing Active
+          MATLAB Retinal Pipeline Active
         </div>
         <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
           MATLAB Enhancement &amp; AI Analysis in Progress
         </h2>
         <p className="text-xs sm:text-sm text-slate-600 max-w-lg mx-auto">
-          Converting fundus image to black and white green channel, equalizing microvascular contrast, and executing diabetic retinopathy AI inference.
+          Executing MATLAB Gaussian illumination correction, CLAHE adaptive equalization, and black &amp; white vessel matrix AI classification.
         </p>
       </div>
 
@@ -112,21 +126,22 @@ export const SimpleAnalysisView: React.FC<SimpleAnalysisViewProps> = ({
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
               <h3 className="font-bold text-sm text-slate-100">
-                MATLAB Black &amp; White Retinal Matrix
+                MATLAB Black &amp; White Matrix View
               </h3>
             </div>
-            <span className="text-[10px] font-mono bg-slate-800 text-blue-300 px-2 py-0.5 rounded">
-              G = I(:,:,2) + CLAHE
+            <span className="text-[10px] font-mono bg-slate-800 text-cyan-300 px-2 py-0.5 rounded border border-cyan-800/40">
+              G = I(:,:,2) + CLAHE + medfilt2
             </span>
           </div>
 
           {/* Black & White Filtered Image */}
           <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-black border border-slate-800 flex items-center justify-center">
-            {/* Black & White enhanced style specifically */}
+            {/* Black & White enhanced image reflecting current step */}
             <img
               src={imageUrl}
               alt="Black and White Enhanced Retina"
-              className="w-full h-full object-contain filter grayscale contrast-150 brightness-95"
+              className="w-full h-full object-contain transition-all duration-500"
+              style={{ filter: activeFilter }}
             />
 
             {/* Simulated MATLAB Scanning Beam */}
@@ -135,20 +150,20 @@ export const SimpleAnalysisView: React.FC<SimpleAnalysisViewProps> = ({
             </div>
 
             {/* Overlay Status Badge */}
-            <div className="absolute top-3 left-3 bg-black/80 backdrop-blur-xs text-white text-[10px] font-mono px-2.5 py-1 rounded border border-slate-700">
-              ● B&amp;W Vascular Contrast Mode
+            <div className="absolute top-3 left-3 bg-black/85 backdrop-blur-xs text-white text-[10px] font-mono px-2.5 py-1 rounded border border-slate-700">
+              ● Black &amp; White Vascular Matrix
             </div>
 
-            <div className="absolute bottom-3 right-3 bg-blue-900/90 text-blue-200 text-[10px] font-mono px-2 py-1 rounded border border-blue-600/50">
+            <div className="absolute bottom-3 right-3 bg-blue-950/90 text-blue-200 text-[10px] font-mono px-2.5 py-1 rounded border border-blue-600/50">
               Patient: {patientDetails.patientName || patientDetails.patientId} ({patientDetails.selectedEye})
             </div>
           </div>
 
           {/* MATLAB Live Script Execution Terminal */}
-          <div className="bg-black/80 border border-slate-800 rounded-xl p-3 font-mono text-[11px] text-emerald-400 space-y-1 overflow-x-auto max-h-32">
+          <div className="bg-black/90 border border-slate-800 rounded-xl p-3 font-mono text-[11px] text-emerald-400 space-y-1 overflow-x-auto max-h-36">
             <div className="text-slate-500 text-[10px] pb-1 border-b border-slate-800 flex items-center justify-between">
-              <span>MATLAB ENGINE (processRetina.m)</span>
-              <span className="text-cyan-400">EXECUTING</span>
+              <span>MATLAB BATCH ENGINE (enhanceRetinaScript.m)</span>
+              <span className="text-cyan-400 animate-pulse">RUNNING</span>
             </div>
             {matlabTerminalLines.map((line, idx) => (
               <div key={idx} className="leading-tight truncate">
@@ -177,10 +192,10 @@ export const SimpleAnalysisView: React.FC<SimpleAnalysisViewProps> = ({
           {/* Step-by-Step Flow List */}
           <div className="space-y-4">
             <h3 className="text-xs font-extrabold uppercase text-slate-400 tracking-wider">
-              Diagnostic Pipeline Steps
+              MATLAB Processing Pipeline
             </h3>
 
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {steps.map((step, idx) => {
                 const isDone = idx < currentStep || progressPercent === 100;
                 const isCurrent = idx === currentStep && progressPercent < 100;
@@ -188,25 +203,25 @@ export const SimpleAnalysisView: React.FC<SimpleAnalysisViewProps> = ({
                 return (
                   <div
                     key={step.id}
-                    className={`p-3.5 rounded-xl border transition-all flex items-start gap-3 ${
+                    className={`p-3 rounded-xl border transition-all flex items-start gap-3 ${
                       isCurrent
-                        ? 'bg-blue-50/70 border-blue-300 shadow-xs'
+                        ? 'bg-blue-50/80 border-blue-300 shadow-xs ring-1 ring-blue-300'
                         : isDone
-                        ? 'bg-slate-50 border-slate-200'
-                        : 'bg-white border-slate-100 opacity-50'
+                        ? 'bg-slate-50/70 border-slate-200'
+                        : 'bg-white border-slate-100 opacity-40'
                     }`}
                   >
                     <div className="mt-0.5">
                       {isDone ? (
-                        <div className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-xs">
-                          <span className="material-symbols-outlined text-[16px]">check</span>
+                        <div className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-xs">
+                          <span className="material-symbols-outlined text-[14px]">check</span>
                         </div>
                       ) : isCurrent ? (
-                        <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center animate-spin">
-                          <span className="material-symbols-outlined text-[16px]">progress_activity</span>
+                        <div className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center animate-spin">
+                          <span className="material-symbols-outlined text-[14px]">progress_activity</span>
                         </div>
                       ) : (
-                        <div className="w-6 h-6 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center text-xs font-bold">
+                        <div className="w-5 h-5 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center text-[10px] font-bold">
                           {idx + 1}
                         </div>
                       )}
@@ -218,7 +233,7 @@ export const SimpleAnalysisView: React.FC<SimpleAnalysisViewProps> = ({
                           {step.title}
                         </h4>
                         {isCurrent && (
-                          <span className="text-[10px] font-bold text-blue-700 bg-blue-100 px-1.5 py-0.2 rounded">
+                          <span className="text-[9px] font-bold text-blue-700 bg-blue-100 px-1.5 py-0.2 rounded">
                             PROCESSING
                           </span>
                         )}
@@ -234,8 +249,8 @@ export const SimpleAnalysisView: React.FC<SimpleAnalysisViewProps> = ({
           </div>
 
           {/* Automatic Redirect Notice */}
-          <div className="pt-2 text-center text-xs text-slate-400">
-            Results and full report preview will load automatically upon completion...
+          <div className="pt-1 text-center text-xs text-slate-400">
+            Results &amp; clinical report preview will load automatically upon completion...
           </div>
         </div>
       </div>

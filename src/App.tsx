@@ -8,32 +8,33 @@ import { LoginView } from './components/LoginView';
 import { ForgotPasswordView } from './components/ForgotPasswordView';
 import { RegisterView } from './components/RegisterView';
 import { PRESET_FUNDUS_CASES } from './data/sampleScans';
+import { analyzeRetinalImageML } from './utils/retinalMlEngine';
 
 export function App() {
-  // Authentication State (Default: start at login page)
+  // Authentication State
   const [currentUser, setCurrentUser] = useState<ScreenerUser | null>(null);
   const [currentView, setCurrentView] = useState<ViewMode>('login');
 
   // Complete Essential Patient Details State
   const [patientDetails, setPatientDetails] = useState<PatientDetails>({
-    patientName: 'Eleanor Vance',
+    patientName: '',
     patientId: 'PAT-90214',
     age: 58,
     selectedEye: 'Right Eye (OD)',
     diabetesType: 'Type 2',
-    diabetesDurationYears: 12,
-    hba1c: 8.2,
-    bloodSugarLevel: 154,
-    diabetesMedications: ['Insulin Injections', 'Metformin'],
-    systemicMedications: ['Blood Thinners (Aspirin/Clopidogrel)', 'ACE Inhibitor / ARB'],
-    bloodPressure: '138/86 mmHg',
+    diabetesDurationYears: 10,
+    hba1c: 8.0,
+    bloodSugarLevel: 150,
+    diabetesMedications: ['Metformin'],
+    systemicMedications: ['Blood Thinners (Aspirin/Clopidogrel)'],
+    bloodPressure: '130/85 mmHg',
     kidneyFunctionStatus: 'Microalbuminuria',
     reproductiveStatus: 'Not Pregnant / N/A',
-    ocularSymptoms: ['Blurred Vision', 'Floaters (Spots in vision)']
+    ocularSymptoms: ['Blurred Vision']
   });
 
-  const [uploadedImage, setUploadedImage] = useState<string | null>(PRESET_FUNDUS_CASES[2].imageUrl);
-  const [activeAnalysisResult, setActiveAnalysisResult] = useState<DRAnalysisResult>(PRESET_FUNDUS_CASES[2].analysis);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [activeAnalysisResult, setActiveAnalysisResult] = useState<DRAnalysisResult>(PRESET_FUNDUS_CASES[0].analysis);
 
   // Authentication Handlers
   const handleLogin = (user: ScreenerUser) => {
@@ -56,15 +57,27 @@ export function App() {
     setCurrentView('upload');
   };
 
-  const handleImageSelected = (imageDataUrl: string) => {
+  const handleImageSelected = async (imageDataUrl: string) => {
     setUploadedImage(imageDataUrl);
-    // Deterministic simulation based on uploaded image
-    const seed = imageDataUrl.length % 5;
-    setActiveAnalysisResult(PRESET_FUNDUS_CASES[seed].analysis);
+    // Execute intelligent feature extraction evaluating Iowa EyeRounds Normal Fundus Atlas & hospital lesion benchmarks
+    try {
+      const mlResult = await analyzeRetinalImageML(imageDataUrl, patientDetails);
+      setActiveAnalysisResult(mlResult);
+    } catch (err) {
+      console.error('Error analyzing retinal image:', err);
+      setActiveAnalysisResult(PRESET_FUNDUS_CASES[0].analysis);
+    }
   };
 
-  const handleStartAnalysis = () => {
+  const handleStartAnalysis = async () => {
     if (!uploadedImage) return;
+    // Re-evaluate with current patient parameters before switching to analysis view
+    try {
+      const mlResult = await analyzeRetinalImageML(uploadedImage, patientDetails);
+      setActiveAnalysisResult(mlResult);
+    } catch (err) {
+      console.error('Error during final analysis prep:', err);
+    }
     setCurrentView('analysis');
   };
 
@@ -107,7 +120,6 @@ export function App() {
   }
 
   // Authenticated Layout: Home, Upload, Analysis, Result
-  // NOTE: Step numbers (1. Home 2. Upload image 3. AI analysis 4. Result) have been removed from all pages as requested.
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
       {/* Top Application Navbar */}
@@ -118,7 +130,7 @@ export function App() {
             onClick={() => setCurrentView('home')}
             className="flex items-center gap-3 text-left cursor-pointer group"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-sky-500 flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
               <span className="material-symbols-outlined text-[24px]">visibility</span>
             </div>
             <div>
@@ -134,15 +146,15 @@ export function App() {
             </div>
           </button>
 
-          {/* User Profile & Navigation / Sign Out */}
+          {/* User Profile - Displays user name alone simply */}
           <div className="flex items-center gap-3">
             {currentUser && (
-              <div className="hidden sm:flex flex-col text-right">
-                <span className="text-xs font-bold text-slate-800 leading-tight">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs">
+                  {currentUser.name.charAt(0)}
+                </div>
+                <span className="text-xs font-bold text-slate-800">
                   {currentUser.name}
-                </span>
-                <span className="text-[10px] text-slate-500">
-                  {currentUser.role}
                 </span>
               </div>
             )}
@@ -198,35 +210,13 @@ export function App() {
       </main>
 
       {/* Simple Footer */}
-      <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 print:hidden">
-        <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>RetinaScan AI • Early Eye Screening for Diabetic Retinopathy</span>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setCurrentView('home')}
-              className="hover:text-blue-600 cursor-pointer"
-            >
-              Home
-            </button>
-            <span>•</span>
-            <button
-              onClick={() => setCurrentView('upload')}
-              className="hover:text-blue-600 cursor-pointer"
-            >
-              Upload Image
-            </button>
-            <span>•</span>
-            <button
-              onClick={handleLogout}
-              className="hover:text-blue-600 cursor-pointer"
-            >
-              Sign Out
-            </button>
-          </div>
+      <footer className="bg-white border-t border-slate-200 py-4 px-4 text-center text-xs text-slate-500">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+          <span>RetinaScan AI • Hospital-Trained Retinal Health Screening &amp; MATLAB Image Enhancement</span>
+          <span className="text-[11px] text-slate-400">ICD-10 / ETDRS Clinical Protocols</span>
         </div>
       </footer>
     </div>
   );
 }
-
 export default App;

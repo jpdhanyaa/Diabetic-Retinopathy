@@ -1,43 +1,53 @@
-function processRetina(inputPath, outputPath)
-% PROCESSRETINA - Diabetic Retinopathy Retinal Image Contrast & Vessel Enhancement
-% Converts RGB fundus photography to black & white G-channel with CLAHE equalization.
+function [Genhanced, Gnorm, Gclahe, Gdenoise] = processRetina(inputPath, outputPath)
+% PROCESSRETINA - Diabetic Retinopathy MATLAB Image Processing Pipeline
+% Implements Gaussian illumination correction, CLAHE, median denoising, and imadjust.
 %
-% Usage in MATLAB:
-%   processRetina('uploads/retina.jpg', 'results/enhanced.jpg')
+% Algorithm:
+%   1. I = imread(inputPath); I = imresize(I, [600 600]);
+%   2. G = I(:,:,2); (Green channel extraction for optimal vessel contrast)
+%   3. background = imfilter(im2double(G), fspecial('gaussian', [51 51], 25), 'replicate');
+%   4. Gnorm = mat2gray(im2double(G) - background); (Illumination correction)
+%   5. Gclahe = adapthisteq(Gnorm, 'NumTiles', [8 8], 'ClipLimit', 0.02); (CLAHE)
+%   6. Gdenoise = medfilt2(Gclahe, [3 3]); (Denoising)
+%   7. Genhanced = imadjust(Gdenoise); (Final contrast enhancement)
 
-% Step 1: Read input retinal fundus photograph
+% Read and resize retinal fundus image
 I = imread(inputPath);
-
-% Step 2: Standardize matrix resolution to 600x600 pixels
 I = imresize(I, [600 600]);
 
-% Step 3: Extract green channel G = I(:,:,2) for optimal black & white vessel contrast
-G = I(:,:,2);
+% Extract green channel or grayscale
+if size(I, 3) == 3
+    G = I(:,:,2);
+else
+    G = I;
+end
 
-% Step 4: Estimate non-uniform background illumination using Gaussian low-pass filter
-background = imgaussfilt(G, 45);
+% Convert to double precision
+Gdouble = im2double(G);
 
-% Step 5: Normalize and divide illumination variations
-Gnorm = imdivide(G, background, 'scaled');
+% Illumination correction
+background = imfilter(Gdouble, ...
+    fspecial('gaussian', [51 51], 25), ...
+    'replicate');
 
-% Step 6: Apply Contrast-Limited Adaptive Histogram Equalization (CLAHE)
+Gnorm = Gdouble - background;
+Gnorm = mat2gray(Gnorm);
+
+% CLAHE enhancement
 Gclahe = adapthisteq(Gnorm, ...
     'NumTiles', [8 8], ...
     'ClipLimit', 0.02);
 
-% Step 7: Denoise micro-artifacts using 3x3 2D median filtering
+% Noise removal
 Gdenoise = medfilt2(Gclahe, [3 3]);
 
-% Step 8: Convert to CIE-Lab color space and replace luminance channel L* with Gdenoise
-I_lab = rgb2lab(I);
-I_lab(:,:,1) = im2double(Gdenoise) * 100;
+% Final contrast enhancement
+Genhanced = imadjust(Gdenoise);
 
-% Step 9: Reconstruct enhanced image from Lab to RGB
-Enhanced = lab2rgb(I_lab);
-
-% Step 10: Write output enhanced retinal image to destination path
-imwrite(Enhanced, outputPath);
-
-fprintf('Successfully processed retinal fundus image: %s -> %s\n', inputPath, outputPath);
+% If output path provided, save final enhanced image
+if nargin >= 2 && ~isempty(outputPath)
+    imwrite(Genhanced, outputPath);
+    fprintf('Saved final enhanced retinal image to: %s\n', outputPath);
+end
 
 end
