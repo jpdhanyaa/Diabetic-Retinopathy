@@ -9,9 +9,20 @@ export type ViewMode =
 
 export type DRSeverity = 0 | 1 | 2 | 3 | 4;
 
+export interface DRSubStageMatch {
+  id: string;
+  name: string;
+  stageLevel: DRSeverity;
+  probability: number; // 0 - 100%
+  isNormal: boolean;
+  badge: string;
+  description: string;
+  keySigns: string;
+}
+
 export interface Lesion {
   id: string;
-  type: 'microaneurysm' | 'hemorrhage' | 'hard_exudate' | 'cotton_wool_spot' | 'neovascularization' | 'optic_disc' | 'macula' | 'irma' | 'venous_bead' | 'drusen';
+  type: 'microaneurysm' | 'hemorrhage' | 'hard_exudate' | 'cotton_wool_spot' | 'neovascularization' | 'optic_disc' | 'macula' | 'irma' | 'venous_bead' | 'drusen' | 'traction_band' | 'vitreous_hem';
   label: string;
   x: number; // percentage 0-100
   y: number; // percentage 0-100
@@ -44,6 +55,32 @@ export interface LesionQuantitativeBreakdown {
   opticDiscMarginSharpness: 'Sharp / Normal' | 'Blurred / Edematous';
 }
 
+export interface MatlabAnalysisData {
+  focusValue: number;
+  brightnessValue: number;
+  contrastValue: number;
+  qualityStatus: 'ACCEPTABLE' | 'REJECTED';
+  numberOfMA: number;
+  exudateArea: number;
+  hemorrhageArea: number;
+  vesselDensity: number;
+  neovascularization: boolean;
+  drLevel: number;
+  drResult: string;
+  referableDR: string;
+  qualityScore: number;
+  lesionScore: number;
+  confidenceScore: number;
+  opticDiscBoundingBox: { x: number; y: number; width: number; height: number } | null;
+  opticDiscCentroid: { x: number; y: number } | null;
+  renderedImages?: {
+    enhanced: string;
+    vessels: string;
+    microaneurysms: string;
+    explainable: string;
+  };
+}
+
 export interface DRAnalysisResult {
   stage: DRSeverity;
   stageName: string;
@@ -57,6 +94,9 @@ export interface DRAnalysisResult {
     stage3: number; // Severe NPDR
     stage4: number; // Proliferative DR
   };
+  // 9 Stage Reference Atlas Matching
+  subStageMatches: DRSubStageMatch[];
+  matchedSubStage: DRSubStageMatch;
   dmeRisk: 'Negative' | 'Suspected' | 'Clinically Significant Macular Edema (CSME)';
   dmeConfidence: number;
   urgency: 'Routine (12 mo)' | 'Semi-Annual (6 mo)' | 'Urgent (1-3 mo)' | 'Immediate (<2 wks)' | 'Emergency Referral';
@@ -69,6 +109,7 @@ export interface DRAnalysisResult {
   eye: 'OD (Right Eye)' | 'OS (Left Eye)';
   etdrsScore: number; // 10 - 85 scale
   matlabLogs?: string[];
+  matlabData?: MatlabAnalysisData;
   // Hospital-fed ML Knowledge & Multi-Condition Differential Diagnosis
   differentialDiagnosis: DifferentialDiagnosisItem[];
   lesionBreakdown: LesionQuantitativeBreakdown;
@@ -111,4 +152,3 @@ export interface ScreenerUser {
   role: string;
   organization: string;
 }
-

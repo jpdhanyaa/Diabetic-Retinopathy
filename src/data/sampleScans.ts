@@ -1,4 +1,4 @@
-import { DRAnalysisResult } from '../types';
+import { DRAnalysisResult, DRSubStageMatch } from '../types';
 
 export interface SampleFundusCase {
   id: string;
@@ -10,19 +10,152 @@ export interface SampleFundusCase {
   analysis: DRAnalysisResult;
 }
 
+export const DR_REFERENCE_STAGES: DRSubStageMatch[] = [
+  {
+    id: 'substage-0-normal',
+    name: 'Without DR (Normal)',
+    stageLevel: 0,
+    probability: 98.6,
+    isNormal: true,
+    badge: 'Stage 0 • Normal',
+    description: 'Crisp physiological fundus: sharp neuroretinal disc margins, intact foveal reflex, zero microaneurysms, hemorrhages, or exudates.',
+    keySigns: 'Zero microvascular lesions, A/V ratio 2:3, uniform macular reflex'
+  },
+  {
+    id: 'substage-early-dr',
+    name: 'Early Diabetic Retinopathy',
+    stageLevel: 1,
+    probability: 0.8,
+    isNormal: false,
+    badge: 'Early Stage • NPDR',
+    description: 'Incipient microvascular alterations: subtle capillary dilation and rare microaneurysm outpouchings (<3 lesions).',
+    keySigns: '1-3 isolated microaneurysms, no retinal edema'
+  },
+  {
+    id: 'substage-mild-npdr',
+    name: 'Mild NPDR',
+    stageLevel: 1,
+    probability: 0.3,
+    isNormal: false,
+    badge: 'Stage 1 • Mild NPDR',
+    description: 'Presence of isolated microaneurysms (<10) with occasional tiny punctate dot hemorrhages in 1 quadrant.',
+    keySigns: 'Microaneurysms < 10, minimal dot hemorrhages'
+  },
+  {
+    id: 'substage-mod-npdr',
+    name: 'Moderate NPDR',
+    stageLevel: 2,
+    probability: 0.1,
+    isNormal: false,
+    badge: 'Stage 2 • Mod NPDR',
+    description: 'Definite microaneurysms, multiple dot and blot hemorrhages across 1-2 quadrants, and small circinate hard exudate rings.',
+    keySigns: 'Microaneurysms 10-30, blot hemorrhages, lipid hard exudates'
+  },
+  {
+    id: 'substage-sev-npdr',
+    name: 'Severe NPDR',
+    stageLevel: 3,
+    probability: 0.1,
+    isNormal: false,
+    badge: 'Stage 3 • Severe NPDR',
+    description: 'Positive 4-2-1 Rule: diffuse intraretinal blot hemorrhages in all 4 quadrants, prominent cotton wool spots, and venous beading.',
+    keySigns: '4-2-1 rule positive, >20 hemorrhages/quadrant, venous beading, cotton wool spots'
+  },
+  {
+    id: 'substage-pdr-neovasc',
+    name: 'PDR and Neovascularization',
+    stageLevel: 4,
+    probability: 0.0,
+    isNormal: false,
+    badge: 'Stage 4 • PDR (Neovascular)',
+    description: 'Active neovascularization of the disc (NVD) or elsewhere (NVE) with fine abnormal vessel fronds penetrating internal limiting membrane.',
+    keySigns: 'Active NVD/NVE fronds, vascular loops, VEGF proliferation'
+  },
+  {
+    id: 'substage-pdr-vitreous-hem',
+    name: 'PDR with Vitreous Hemorrhage',
+    stageLevel: 4,
+    probability: 0.0,
+    isNormal: false,
+    badge: 'Stage 4 • PDR (Vitreous Bleed)',
+    description: 'Rupture of fragile neovascular vessels causing dense dark boat-shaped preretinal or diffuse vitreous hemorrhage.',
+    keySigns: 'Dense subhyaloid / vitreous blood pool obscuring retinal background'
+  },
+  {
+    id: 'substage-pdr-vit-plm',
+    name: 'PDR with Vitreous Hemorrhage and PLM',
+    stageLevel: 4,
+    probability: 0.0,
+    isNormal: false,
+    badge: 'Stage 4 • PDR (PLM Involvement)',
+    description: 'Extensive vitreous hemorrhage with posterior limiting membrane (PLM) entrapment and fibrovascular membrane condensation.',
+    keySigns: 'Preretinal hemorrhage trapped beneath detached PLM layer'
+  },
+  {
+    id: 'substage-traction-bands',
+    name: 'Vitreoretinal Traction Bands',
+    stageLevel: 4,
+    probability: 0.0,
+    isNormal: false,
+    badge: 'Stage 4 Advanced • Tractional Risk',
+    description: 'Dense whitish-silvery fibrovascular traction bands pulling the retinal plane with imminent tractional retinal detachment (TRD).',
+    keySigns: 'Fibrous proliferative bands, retinal tenting, TRD risk'
+  }
+];
+
+export function buildSubStageProbabilities(primaryStage: 0 | 1 | 2 | 3 | 4, customConfidence = 95): DRSubStageMatch[] {
+  return DR_REFERENCE_STAGES.map((ref) => {
+    let prob = 0.5;
+    if (primaryStage === 0) {
+      if (ref.id === 'substage-0-normal') prob = Number(customConfidence.toFixed(1));
+      else if (ref.id === 'substage-early-dr') prob = 1.2;
+      else if (ref.id === 'substage-mild-npdr') prob = 0.6;
+      else prob = 0.1;
+    } else if (primaryStage === 1) {
+      if (ref.id === 'substage-mild-npdr') prob = Number((customConfidence * 0.65).toFixed(1));
+      else if (ref.id === 'substage-early-dr') prob = Number((customConfidence * 0.30).toFixed(1));
+      else if (ref.id === 'substage-mod-npdr') prob = 3.5;
+      else if (ref.id === 'substage-0-normal') prob = 1.8;
+      else prob = 0.2;
+    } else if (primaryStage === 2) {
+      if (ref.id === 'substage-mod-npdr') prob = Number(customConfidence.toFixed(1));
+      else if (ref.id === 'substage-mild-npdr') prob = 4.2;
+      else if (ref.id === 'substage-sev-npdr') prob = 2.8;
+      else if (ref.id === 'substage-0-normal') prob = 0.4;
+      else prob = 0.2;
+    } else if (primaryStage === 3) {
+      if (ref.id === 'substage-sev-npdr') prob = Number(customConfidence.toFixed(1));
+      else if (ref.id === 'substage-pdr-neovasc') prob = 4.5;
+      else if (ref.id === 'substage-mod-npdr') prob = 2.2;
+      else prob = 0.1;
+    } else {
+      if (ref.id === 'substage-pdr-neovasc') prob = Number((customConfidence * 0.45).toFixed(1));
+      else if (ref.id === 'substage-pdr-vitreous-hem') prob = Number((customConfidence * 0.30).toFixed(1));
+      else if (ref.id === 'substage-traction-bands') prob = Number((customConfidence * 0.15).toFixed(1));
+      else if (ref.id === 'substage-pdr-vit-plm') prob = Number((customConfidence * 0.10).toFixed(1));
+      else prob = 0.1;
+    }
+
+    return {
+      ...ref,
+      probability: prob
+    };
+  });
+}
+
 // Built-in hospital datasets & clinical features fed from Barbara Davis Center, Retina Today, and Eye7 Hospitals
 export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
   {
     id: 'case-stage-0',
-    title: 'Stage 0: Normal Healthy Retina',
+    title: 'Stage 0: Without DR (Normal)',
     stageName: 'No Diabetic Retinopathy',
     stage: 0,
     description: 'Physiological fundus: crisp optic disc margins, cup-to-disc ratio 0.3, absence of microaneurysms, hemorrhages, or lipid exudates.',
     imageUrl: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=800&q=80',
     analysis: {
       stage: 0,
-      stageName: 'No Diabetic Retinopathy (Stage 0)',
-      stageShortName: 'No DR',
+      stageName: 'No Diabetic Retinopathy (Stage 0: Normal)',
+      stageShortName: 'Without DR (Normal)',
       icdCode: 'E11.319 (Type 2 DM without retinopathy)',
       confidence: 99.1,
       classProbabilities: {
@@ -32,15 +165,17 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
         stage3: 0.1,
         stage4: 0.0
       },
+      subStageMatches: buildSubStageProbabilities(0, 99.1),
+      matchedSubStage: DR_REFERENCE_STAGES[0],
       dmeRisk: 'Negative',
       dmeConfidence: 99.5,
       urgency: 'Routine (12 mo)',
       urgencyColor: 'text-emerald-700 bg-emerald-50 border-emerald-200',
       keyFindings: [
-        'Well-defined optic nerve head with sharp neuroretinal rim (ISNT rule preserved)',
+        'Physiological normal fundus with sharp optic nerve head (ISNT rule preserved)',
         'Normal foveal avascular zone (FAZ) contour and uniform xanthophyll reflex',
-        'Retinal arteriolar/venular caliber ratio within physiological limits (A/V ratio 2:3)',
-        'Zero microaneurysms, dot/blot hemorrhages, or hard exudates detected (Barbara Davis criteria)'
+        'Retinal arteriolar/venular caliber ratio within normal limits (A/V ratio 2:3)',
+        'Zero microaneurysms, dot/blot hemorrhages, or hard exudates detected (Without DR criteria)'
       ],
       recommendedAction: 'Annual dilated eye examination. Maintain glycemic target (HbA1c < 7.0%) and regular blood pressure monitoring.',
       lesions: [
@@ -77,7 +212,7 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
           probability: 0.9,
           status: 'Ruled Out',
           keyDifferentiators: 'No microaneurysms or punctate capillary dilatations found.',
-          hospitalReference: 'Barbara Davis Center / ETDRS Level 10'
+          hospitalReference: 'Normal Fundus Atlas / ETDRS Level 10'
         },
         {
           condition: 'Hypertensive Retinopathy',
@@ -142,7 +277,7 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
     title: 'Stage 1: Mild NPDR',
     stageName: 'Mild Non-Proliferative DR',
     stage: 1,
-    description: 'Presence of isolated microaneurysms (<5) in temporal macula. Earliest clinical lesion per Barbara Davis Center criteria.',
+    description: 'Presence of isolated microaneurysms (<5) in temporal macula. Earliest clinical lesion per standard criteria.',
     imageUrl: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80',
     analysis: {
       stage: 1,
@@ -157,13 +292,15 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
         stage3: 0.1,
         stage4: 0.1
       },
+      subStageMatches: buildSubStageProbabilities(1, 94.8),
+      matchedSubStage: DR_REFERENCE_STAGES[2],
       dmeRisk: 'Negative',
       dmeConfidence: 96.2,
       urgency: 'Routine (12 mo)',
       urgencyColor: 'text-blue-700 bg-blue-50 border-blue-200',
       keyFindings: [
         '3 isolated microaneurysms (focal outpouchings <125μm) detected in temporal parafoveal quadrant',
-        'Zero blot hemorrhages or confluent lipid exudates (Barbara Davis Center Grade 1)',
+        'Zero blot hemorrhages or confluent lipid exudates (Grade 1 Mild NPDR)',
         'Macular foveal contour intact without center-involving edema',
         'Optic disc margins sharp with normal cup-to-disc ratio (0.32)'
       ],
@@ -213,7 +350,7 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
           probability: 94.8,
           status: 'Primary Diagnosis',
           keyDifferentiators: 'Focal microaneurysms detected in parafoveal capillary plexus.',
-          hospitalReference: 'Barbara Davis Center for Diabetes / ETDRS Level 20'
+          hospitalReference: 'ETDRS Level 20 Standard'
         },
         {
           condition: 'Hypertensive Retinopathy',
@@ -278,7 +415,7 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
     title: 'Stage 2: Moderate NPDR',
     stageName: 'Moderate Non-Proliferative DR',
     stage: 2,
-    description: 'Multiple microaneurysms, dot & blot hemorrhages in 2 quadrants, small circinate ring of hard exudates (lipoprotein deposits).',
+    description: 'Multiple microaneurysms, dot & blot hemorrhages in 2 quadrants, small circinate ring of hard exudates.',
     imageUrl: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=800&q=80',
     analysis: {
       stage: 2,
@@ -293,6 +430,8 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
         stage3: 2.3,
         stage4: 0.3
       },
+      subStageMatches: buildSubStageProbabilities(2, 92.4),
+      matchedSubStage: DR_REFERENCE_STAGES[3],
       dmeRisk: 'Suspected',
       dmeConfidence: 78.4,
       urgency: 'Semi-Annual (6 mo)',
@@ -360,7 +499,7 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
           probability: 92.4,
           status: 'Primary Diagnosis',
           keyDifferentiators: 'Characteristic dot-blot hemorrhages & circinate hard exudate rings.',
-          hospitalReference: 'Barbara Davis Center / ETDRS Level 43'
+          hospitalReference: 'ETDRS Level 43 Standard'
         },
         {
           condition: 'Hypertensive Retinopathy',
@@ -425,7 +564,7 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
     title: 'Stage 3: Severe NPDR',
     stageName: 'Severe Non-Proliferative DR',
     stage: 3,
-    description: 'Positive 4-2-1 Rule: >20 intraretinal hemorrhages in all 4 quadrants, definite venous beading, and cotton wool spots (focal nerve fiber layer infarcts).',
+    description: 'Positive 4-2-1 Rule: >20 intraretinal hemorrhages in all 4 quadrants, definite venous beading, and cotton wool spots.',
     imageUrl: 'https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=800&q=80',
     analysis: {
       stage: 3,
@@ -440,6 +579,8 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
         stage3: 96.7,
         stage4: 1.5
       },
+      subStageMatches: buildSubStageProbabilities(3, 96.7),
+      matchedSubStage: DR_REFERENCE_STAGES[4],
       dmeRisk: 'Clinically Significant Macular Edema (CSME)',
       dmeConfidence: 91.2,
       urgency: 'Urgent (1-3 mo)',
@@ -507,7 +648,7 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
           probability: 96.7,
           status: 'Primary Diagnosis',
           keyDifferentiators: 'ETDRS 4-2-1 criteria met with diffuse blot hemorrhages and venous beading.',
-          hospitalReference: 'Barbara Davis Center for Diabetes / ETDRS Level 53'
+          hospitalReference: 'ETDRS Level 53 Standard'
         },
         {
           condition: 'Hypertensive Retinopathy',
@@ -587,6 +728,8 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
         stage3: 1.4,
         stage4: 98.4
       },
+      subStageMatches: buildSubStageProbabilities(4, 98.4),
+      matchedSubStage: DR_REFERENCE_STAGES[5],
       dmeRisk: 'Clinically Significant Macular Edema (CSME)',
       dmeConfidence: 95.8,
       urgency: 'Emergency Referral',
@@ -595,9 +738,9 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
         'Definitive Neovascularization of the Optic Disc (NVD > 1/3 disc area stimulated by VEGF)',
         'Active Neovascularization Elsewhere (NVE) extending along temporal vascular arcades',
         'Preretinal boat-shaped (subhyaloid) hemorrhage in superior nasal quadrant',
-        'High risk of tractional retinal detachment (TRD) and neovascular glaucoma (Eye7 & Retina Today)'
+        'High risk of tractional retinal detachment (TRD) and neovascular glaucoma'
       ],
-      recommendedAction: 'STAT Retina Specialist consultation. Immediate Panretinal Photocoagulation (PRP) laser surgery combined with intravitreal Anti-VEGF (Aflibercept/Ranibizumab) injections.',
+      recommendedAction: 'STAT Retina Specialist consultation. Immediate Panretinal Photocoagulation (PRP) laser surgery combined with intravitreal Anti-VEGF injections.',
       lesions: [
         {
           id: 'l-4-nvd',
@@ -654,7 +797,7 @@ export const PRESET_FUNDUS_CASES: SampleFundusCase[] = [
           probability: 98.4,
           status: 'Primary Diagnosis',
           keyDifferentiators: 'Severe proliferative neovascular fronds (NVD/NVE) and preretinal hemorrhage.',
-          hospitalReference: 'Barbara Davis Center for Diabetes / ETDRS Level 71'
+          hospitalReference: 'ETDRS Level 71 Standard'
         },
         {
           condition: 'Hypertensive Retinopathy',

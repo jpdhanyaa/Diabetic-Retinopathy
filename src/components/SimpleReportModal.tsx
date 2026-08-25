@@ -154,19 +154,19 @@ export const SimpleReportModal: React.FC<SimpleReportModalProps> = ({
             <div className="grid grid-cols-3 gap-3">
               {/* Original Image */}
               <div className="space-y-1 text-center">
-                <div className="aspect-square rounded-lg overflow-hidden bg-black border border-slate-200">
-                  <img src={imageUrl} alt="Original" className="w-full h-full object-cover" />
+                <div className="aspect-4/3 sm:aspect-square rounded-lg overflow-hidden bg-slate-950 border border-slate-200 flex items-center justify-center p-1">
+                  <img src={imageUrl} alt="Original" className="w-full h-full object-contain object-center" />
                 </div>
                 <span className="text-[11px] font-bold text-slate-700 block">1. Original Image</span>
               </div>
 
               {/* Enhanced Image */}
               <div className="space-y-1 text-center">
-                <div className="aspect-square rounded-lg overflow-hidden bg-black border border-slate-200">
+                <div className="aspect-4/3 sm:aspect-square rounded-lg overflow-hidden bg-slate-950 border border-slate-200 flex items-center justify-center p-1">
                   <img
                     src={imageUrl}
                     alt="Enhanced"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain object-center"
                     style={{ filter: 'contrast(175%) brightness(105%) saturate(125%)' }}
                   />
                 </div>
@@ -175,15 +175,15 @@ export const SimpleReportModal: React.FC<SimpleReportModalProps> = ({
 
               {/* AI Explanation / Heatmap */}
               <div className="space-y-1 text-center">
-                <div className="relative aspect-square rounded-lg overflow-hidden bg-black border border-slate-200">
+                <div className="relative aspect-4/3 sm:aspect-square rounded-lg overflow-hidden bg-slate-950 border border-slate-200 flex items-center justify-center p-1">
                   <img
                     src={imageUrl}
                     alt="AI Explanation"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain object-center"
                     style={{ filter: 'contrast(170%) brightness(105%)' }}
                   />
                   <div
-                    className="absolute inset-0 opacity-60 mix-blend-color-dodge"
+                    className="absolute inset-0 opacity-60 mix-blend-color-dodge pointer-events-none"
                     style={{
                       background:
                         analysis.stage === 0

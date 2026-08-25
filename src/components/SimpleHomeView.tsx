@@ -48,7 +48,7 @@ export const SimpleHomeView: React.FC<SimpleHomeViewProps> = ({
         </div>
       </div>
 
-      {/* Hospital Resources & Clinical Knowledge Base Section - MILD COLORS */}
+      {/* Hospital Resources & Clinical Knowledge Base Section */}
       <div className="bg-slate-50/90 rounded-2xl border border-slate-200/90 p-6 sm:p-7 space-y-4 shadow-2xs">
         <div className="flex items-center justify-between border-b border-slate-200 pb-3">
           <div className="flex items-center gap-2">

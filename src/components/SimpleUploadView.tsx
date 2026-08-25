@@ -22,7 +22,6 @@ export const SimpleUploadView: React.FC<SimpleUploadViewProps> = ({
   const [imagePreview, setImagePreview] = useState<string | null>(initialImage);
   const [isCheckingQuality, setIsCheckingQuality] = useState<boolean>(false);
   const [qualityResult, setQualityResult] = useState<QualityAnalysisResult | null>(null);
-  const [allowOverride, setAllowOverride] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -33,7 +32,6 @@ export const SimpleUploadView: React.FC<SimpleUploadViewProps> = ({
 
   const runQualityCheck = async (dataUrl: string) => {
     setIsCheckingQuality(true);
-    setAllowOverride(false);
     try {
       const result = await validateRetinalImageQuality(dataUrl);
       setQualityResult(result);
@@ -61,7 +59,6 @@ export const SimpleUploadView: React.FC<SimpleUploadViewProps> = ({
   const handleClearImage = () => {
     setImagePreview(null);
     setQualityResult(null);
-    setAllowOverride(false);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -603,18 +600,11 @@ export const SimpleUploadView: React.FC<SimpleUploadViewProps> = ({
                         </p>
                       )}
 
-                      {/* Override option for clinical screeners if image is rejected */}
+                      {/* If rejected, strictly guide user to re-upload clear fundus photo */}
                       {qualityResult.status === 'rejected' && (
-                        <div className="pt-2 flex items-center justify-between gap-2 border-t border-rose-200 mt-2">
-                          <label className="text-[10px] text-rose-800 flex items-center gap-1.5 cursor-pointer font-medium">
-                            <input
-                              type="checkbox"
-                              checked={allowOverride}
-                              onChange={(e) => setAllowOverride(e.target.checked)}
-                              className="rounded text-rose-600 focus:ring-rose-500"
-                            />
-                            Force Screener Override (Proceed anyway despite blur/quality warning)
-                          </label>
+                        <div className="pt-2 text-[11px] text-rose-700 font-bold flex items-center gap-1.5 border-t border-rose-200 mt-2">
+                          <span className="material-symbols-outlined text-[16px]">info</span>
+                          Analysis is locked. Please click "Change Image" to upload a clear, focused retinal photograph.
                         </div>
                       )}
                     </div>
@@ -636,15 +626,15 @@ export const SimpleUploadView: React.FC<SimpleUploadViewProps> = ({
                 <button
                   type="button"
                   onClick={onStartAnalysis}
-                  disabled={qualityResult?.status === 'rejected' && !allowOverride}
+                  disabled={qualityResult?.status === 'rejected'}
                   className={`w-full sm:w-auto px-8 py-3.5 font-extrabold text-xs sm:text-sm rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                    qualityResult?.status === 'rejected' && !allowOverride
-                      ? 'bg-slate-300 text-slate-500 cursor-not-allowed shadow-none'
+                    qualityResult?.status === 'rejected'
+                      ? 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none border border-slate-300'
                       : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-600/30 active:scale-98'
                   }`}
                 >
                   <span className="material-symbols-outlined text-[20px]">biotech</span>
-                  {qualityResult?.status === 'rejected' && !allowOverride
+                  {qualityResult?.status === 'rejected'
                     ? 'CANNOT ANALYZE (RE-UPLOAD)'
                     : 'START ANALYSIS'}
                   <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
